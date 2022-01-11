@@ -23,6 +23,7 @@ urlbase='https://cdeluruguay.gob.ar/'
 monthDict = {'Enero':1,'Febrero':2, 'Marzo':3, 'Abril':4,  
                'Mayo':5,  'Junio':6,  'Julio':7,  'Agosto':8,
                'Septiembre':9,  'Octubre':10,  'Noviembre':11,  'Diciembre':12}
+contractsFolder=f'contratos/'
 
 def mapMarket(month, year, marketNumber, marketName):
     tableContent=[]
@@ -52,31 +53,31 @@ def mapMonth(month,year):
         parsedUrl = urlparse(url)
         marketNumber = parse_qs(parsedUrl.query)['rubro'][0]
         df=df.append(mapMarket(month, year, marketNumber, marketName), ignore_index=True)
-    if not df.empty:
-        print(f'month {month} of year {year} mapped successfully')
-        route=f'contratos-{month}-{year}.xlsx'
+    if not df.empty:       
+        route=f'{contractsFolder}contratos-{month}-{year}.xlsx'
         df.to_excel(route, index = False)
+        print(f'month {month} of year {year} mapped successfully')
     else:
         print(f'month {month} of year {year} does not have any contract yet')
 
 def mapYear(year):
     if year==now.year:
        for month in monthsOfThisYear:
-           if not os.path.exists(f'./contratos-{month}-{year}.xlsx'):
+           if not os.path.exists(f'./{contractsFolder}contratos-{month}-{year}.xlsx'):
                mapMonth(month,year)
     else:
        for month in months:
-           if not os.path.exists(f'./contratos-{month}-{year}.xlsx'):
+           if not os.path.exists(f'./{contractsFolder}contratos-{month}-{year}.xlsx'):
                mapMonth(month,year)
     print(f'year {year} mapped successfully')
 
 def mapComplete():
     for year in years:
         if year != now.year:
-            if not os.path.exists(f'./contratos-{12}-{year}.xlsx'):
+            if not os.path.exists(f'./{contractsFolder}contratos-{12}-{year}.xlsx'):
                 mapYear(year)
         else:
-            if not isScrapingUpToDate() or not os.path.exists(f'./contratos-{now.month}-{year}.xlsx'):
+            if not isScrapingUpToDate() or not os.path.exists(f'./{contractsFolder}contratos-{now.month}-{year}.xlsx'):
                 mapYear(year)   
                 writeLastRun()
 
@@ -117,16 +118,17 @@ def appendAllYears():
     df=pd.DataFrame(columns=columnNames)
     for year in years:
         for month in months:
-            if os.path.exists(f'./contratos-{month}-{year}.xlsx'):
-                df=df.append(pd.read_excel(f'contratos-{month}-{year}.xlsx'))   
-    route=f'contratos-complete.csv'
+            if os.path.exists(f'./{contractsFolder}contratos-{month}-{year}.xlsx'):
+                df=df.append(pd.read_excel(f'{contractsFolder}contratos-{month}-{year}.xlsx'))   
+    route=f'{contractsFolder}contratos-complete.csv'
     df.to_csv(route, index = False)    
     
 
 columnNames = ['Año','Mes','Rubro','CUIL proveedor','Razon social',
                    'Nombre Fantasia','Cantidad de contratados', 
                     'Importe']
-
+if not os.path.exists(f'./{contractsFolder}'):
+            os.mkdir(contractsFolder)
 mapComplete()  
 appendAllYears()  
 
