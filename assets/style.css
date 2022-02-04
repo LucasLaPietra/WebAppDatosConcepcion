@@ -1,0 +1,44 @@
+.centered-subtitle{
+    text-align: center;
+    margin-top:20px;
+}
+
+.date-row{
+    text-align: center;
+    margin-bottom:20px;
+}
+
+.nav-tabs{
+    border: 2px;
+}
+
+.tab-title{
+    text-align: center;
+    margin:20px;
+}
+
+.title-row{
+    margin:20px;
+}
+
+.dropdown-tab-title{
+    padding-top:5px;
+    text-align: right;
+}
+
+.centered-table{
+    text-align: center;
+}
+
+.revenue-column{
+    text-align: center;
+}
+
+.centered-subtitle{
+    text-align: center;
+}
+
+.drop-down{
+    text-align: left;
+}
+
