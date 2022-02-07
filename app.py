@@ -5,11 +5,13 @@ from dash import dcc
 from dash import html
 from datetime import datetime as dt
 import plotly.express as px
+import flask
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL])
+
+server = flask.Flask(__name__)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL], server=server)
 app.title = 'Visualizacion datos contratos publicos'
-server = app.server
 
 topNavBar = dbc.Navbar(
     children=[
