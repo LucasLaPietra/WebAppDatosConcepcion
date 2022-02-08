@@ -24,7 +24,7 @@ topNavBar = dbc.Navbar(
                         html.H5(children='Datos Concepcion')
                     ])
                 ],
-                align="center"
+                align="center", className='nav-bar'
             )
         )
     ],
@@ -33,7 +33,7 @@ topNavBar = dbc.Navbar(
     sticky="top"
 )
 
-body = dbc.Container(
+dateSelector = dbc.Container(
     children=[
         dbc.Row(
             [dbc.Col([
@@ -91,10 +91,10 @@ revenueTab = dbc.Container(children=[
 ])
 
 df = px.data.gapminder().query("country=='Canada'")
-figProvidersPayment = px.bar(df, x="year", y="lifeExp",labels={
-                     "year": "tiempo",
-                     "lifeExp": "gasto",
-                 },)
+figProvidersPayment = px.bar(df, x="year", y="lifeExp", labels={
+    "year": "tiempo",
+    "lifeExp": "gasto",
+}, color_continuous_scale="Peach", color="lifeExp")
 
 providersPaymentTab = html.Div(children=[
     dbc.Row(
@@ -103,8 +103,8 @@ providersPaymentTab = html.Div(children=[
                 [
                     html.H5(
                         "En esta seccion puede conocerse el dinero percibido por diferentes proveedores en un rubro",
-                        ),
-                ],className='dropdown-tab-title', width=8
+                    ),
+                ], className='dropdown-tab-title', width=8
             ),
             dbc.Col(
                 [
@@ -131,11 +131,11 @@ providersPaymentTab = html.Div(children=[
     ),
 ])
 
-
-figExpensesEvolution = px.line(df, x="year", y="lifeExp",labels={
-                     "year": "tiempo",
-                     "lifeExp": "gasto",
-                 },)
+figExpensesEvolution = px.line(df, x="year", y="lifeExp", labels={
+    "year": "tiempo",
+    "lifeExp": "gasto",
+})
+figExpensesEvolution.data[0].line.color = "Red"
 
 expensesEvolutionTab = html.Div(children=[
     dbc.Row(
@@ -158,10 +158,10 @@ table_header = [
     html.Thead(html.Tr([html.Th("Proveedor"), html.Th("Cuit"), html.Th("Importe Total")]))
 ]
 
-row1 = html.Tr([html.Td("Proveedor 1"), html.Td("00-00000000-0"),  html.Td("$1000")])
-row2 = html.Tr([html.Td("Proveedor 2"), html.Td("00-00000000-0"),  html.Td("$1000")])
-row3 = html.Tr([html.Td("Proveedor 3"), html.Td("00-00000000-0"),  html.Td("$1000")])
-row4 = html.Tr([html.Td("Proveedor 4"), html.Td("00-00000000-0"),  html.Td("$1000")])
+row1 = html.Tr([html.Td("Proveedor 1"), html.Td("00-00000000-0"), html.Td("$1000")])
+row2 = html.Tr([html.Td("Proveedor 2"), html.Td("00-00000000-0"), html.Td("$1000")])
+row3 = html.Tr([html.Td("Proveedor 3"), html.Td("00-00000000-0"), html.Td("$1000")])
+row4 = html.Tr([html.Td("Proveedor 4"), html.Td("00-00000000-0"), html.Td("$1000")])
 
 table_body = [html.Tbody([row1, row2, row3, row4])]
 
@@ -187,19 +187,23 @@ providersRankingTab = dbc.Container(children=[
     ),
 ])
 
-tabs = dbc.Tabs(
+body = html.Div(
     [
-        dbc.Tab(revenueTab, label="Datos por totales"),
-        dbc.Tab(providersPaymentTab, label="Pago a proveedores"),
-        dbc.Tab(expensesEvolutionTab, label="Evolución de los gastos"),
-        dbc.Tab(providersRankingTab, label="Ranking proveedores")
+        html.Hr(),
+        dbc.Row(dbc.Col(revenueTab)),
+        html.Hr(),
+        dbc.Row(dbc.Col(providersPaymentTab)),
+        html.Hr(),
+        dbc.Row(dbc.Col(expensesEvolutionTab)),
+        html.Hr(),
+        dbc.Row(dbc.Col(providersRankingTab)),
     ]
 )
 
 app.layout = html.Div(children=[
     topNavBar,
-    body,
-    tabs])
+    dateSelector,
+    body])
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
