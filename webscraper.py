@@ -25,6 +25,11 @@ monthDict = {'Enero':1,'Febrero':2, 'Marzo':3, 'Abril':4,
                'Septiembre':9,  'Octubre':10,  'Noviembre':11,  'Diciembre':12}
 contractsFolder=f'contratos/'
 
+def formatImportToNumber(text):
+    text =text.replace(".","")
+    text =text.replace(",",".")
+    return text
+
 def mapMarket(month, year, marketNumber, marketName):
     tableContent=[]
     driver.get(f'https://cdeluruguay.gob.ar/datagov/proveedoresContratadosAMRP.php?anio={year}&mes={month}&rubro={marketNumber}')
@@ -36,8 +41,11 @@ def mapMarket(month, year, marketNumber, marketName):
         rowElem.append(month)
         rowElem.append(marketName)
         for element in row.findAll('td'):
-            if '%' not in element.text:
-                rowElem.append(element.text)
+            text=element.text
+            if '%' not in text:
+                if ',' in text:
+                    text = formatImportToNumber(text)
+                rowElem.append(text)
         tableContent.append(rowElem) 
     df=pd.DataFrame(tableContent,columns=columnNames)
     return df 
