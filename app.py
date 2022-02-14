@@ -6,12 +6,17 @@ from dash import html
 from datetime import datetime as dt
 import plotly.express as px
 import flask
+import pandas as pd
+import utils
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 server = flask.Flask(__name__)
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL], server=server)
 app.title = 'Visualizacion datos contratos publicos'
+
+df = pd.read_csv('https://github.com/LucasLaPietra/WebScraperDatosConcepcion/blob/main/webscraping-app/contratos'
+                 '/contratos-complete.csv?raw=true')
 
 topNavBar = dbc.Navbar(
     children=[
@@ -62,6 +67,7 @@ dateSelector = dbc.Container(
     ]
 )
 
+revenueData = utils.revenue_data(df)
 revenueTab = dbc.Container(children=[
     dbc.Row(
         dbc.Col([
@@ -73,17 +79,17 @@ revenueTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H4("Total de ordenes de compra por:"),
-                html.H3("$10000000"),
+                html.H3(revenueData[0]),
             ], className='revenue-column'
             ),
             dbc.Col([
                 html.H4("Cantidad de proveedores:"),
-                html.H3("500"),
+                html.H3(revenueData[1]),
             ], className='revenue-column'
             ),
             dbc.Col([
                 html.H4("Cantidad de ordenes de compra"),
-                html.H3("1000"),
+                html.H3(revenueData[2]),
             ], className='revenue-column'
             )]
         , justify="center"
