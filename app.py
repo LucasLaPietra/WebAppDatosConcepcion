@@ -8,15 +8,23 @@ import plotly.express as px
 import flask
 import pandas as pd
 import utils
+import re
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 server = flask.Flask(__name__)
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL], server=server)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL, dbc.icons.BOOTSTRAP], server=server)
 app.title = 'Visualizacion datos contratos publicos'
 
 df = pd.read_csv('https://github.com/LucasLaPietra/WebScraperDatosConcepcion/blob/main/webscraping-app/contratos'
                  '/contratos-complete.csv?raw=true')
+
+maxYear = df['Año'].max()
+minYear = df['Año'].min()
+maxFirstYearMonth = df[(df['Año'] == minYear)]['Mes'].max()
+minFirstYearMonth = df[(df['Año'] == minYear)]['Mes'].min()
+maxActualYearMonth = df[(df['Año'] == maxYear)]['Mes'].max()
+minActualYearMonth = df[(df['Año'] == maxYear)]['Mes'].min()
 
 topNavBar = dbc.Navbar(
     children=[
@@ -38,28 +46,8 @@ topNavBar = dbc.Navbar(
     sticky="top"
 )
 
-dateSelector = dbc.Container(
+title = dbc.Container(
     children=[
-        dbc.Row(
-            [dbc.Col([
-                html.H5("Para conocer la informacion en un rango de fechas determinado, "
-                        "utilice el filtro por fechas", className='centered-subtitle')], width=12)
-            ], justify="center"
-        ),
-        dbc.Row(
-            [dbc.Col([
-                dcc.DatePickerRange(
-                    id='daterange',
-                    min_date_allowed=dt(2020, 5, 1),
-                    max_date_allowed=dt(2020, 5, 31),
-                    start_date=dt(2020, 5, 1).date(),
-                    end_date=dt(2020, 5, 31).date(),
-                    display_format='D/M/Y',
-                    calendar_orientation='horizontal'),
-            ], width=6, className='date-row'
-            ),
-            ], justify="center"
-        ),
         dbc.Row([html.H4("Actualmente la municipalidad de concepcion del uruguay informa en su sitio",
                          className='centered-subtitle'),
                  ], justify="center"
@@ -67,7 +55,6 @@ dateSelector = dbc.Container(
     ]
 )
 
-revenueData = utils.revenue_data(df)
 revenueTab = dbc.Container(children=[
     dbc.Row(
         dbc.Col([
@@ -76,31 +63,54 @@ revenueTab = dbc.Container(children=[
         ), justify="center"
     ),
     dbc.Row(
+        [dbc.Col([
+            dcc.DatePickerRange(
+                id='dateRangeRevenue',
+                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                display_format='D/M/Y',
+                calendar_orientation='horizontal'),
+        ], width=6, className='date-row'
+        ),
+        ], justify="center"
+    ),
+    dbc.Row(
         [
             dbc.Col([
-                html.H4("Total de ordenes de compra por:"),
-                html.H3(revenueData[0]),
+                dbc.Card([
+                    html.Img(src=app.get_asset_url("file-lines-solid.svg"), className='revenue-icon'),
+                    html.H4("Total de ordenes de compra por:"),
+                    html.H3(id='totalRevenue'),
+                ])
             ], className='revenue-column'
             ),
             dbc.Col([
-                html.H4("Cantidad de proveedores:"),
-                html.H3(revenueData[1]),
+                dbc.Card([
+                    html.Img(src=app.get_asset_url("clipboard-solid.svg"), className='revenue-icon'),
+                    html.H4("Cantidad de proveedores:"),
+                    html.H3(id='totalProviders'),
+                ])
             ], className='revenue-column'
             ),
             dbc.Col([
-                html.H4("Cantidad de ordenes de compra"),
-                html.H3(revenueData[2]),
+                dbc.Card([
+                    html.Img(src=app.get_asset_url("dolly-solid.svg"), className='revenue-icon'),
+                    html.H4("Cantidad de ordenes de compra:"),
+                    html.H3(id='totalBuyOrders'),
+                ])
             ], className='revenue-column'
             )]
         , justify="center"
     ),
 ])
 
-df = px.data.gapminder().query("country=='Canada'")
-figProvidersPayment = px.bar(df, x="year", y="lifeExp", labels={
-    "year": "tiempo",
-    "lifeExp": "gasto",
-}, color_continuous_scale="Peach", color="lifeExp")
+dfProvidersPayment = df.groupby(['Nombre Fantasia'], as_index=False)['Importe'].sum()
+figProvidersPayment = px.bar(dfProvidersPayment, x="Nombre Fantasia", y="Importe", labels={
+    "Nombre Fantasia": "proveedor",
+    "Importe": "Dinero percibido",
+}, color_continuous_scale="Peach", color="Importe")
 
 providersPaymentTab = html.Div(children=[
     dbc.Row(
@@ -128,6 +138,20 @@ providersPaymentTab = html.Div(children=[
         ], justify="center", className='title-row'
     ),
     dbc.Row(
+        [dbc.Col([
+            dcc.DatePickerRange(
+                id='dateRangeProvidersPayment',
+                min_date_allowed=dt(2020, 5, 1),
+                max_date_allowed=dt(2020, 5, 31),
+                start_date=dt(2020, 5, 1).date(),
+                end_date=dt(2020, 5, 31).date(),
+                display_format='D/M/Y',
+                calendar_orientation='horizontal'),
+        ], width=6, className='date-row'
+        ),
+        ], justify="center"
+    ),
+    dbc.Row(
         [
             html.Div([
                 dcc.Graph(figure=figProvidersPayment)
@@ -137,9 +161,9 @@ providersPaymentTab = html.Div(children=[
     ),
 ])
 
-figExpensesEvolution = px.line(df, x="year", y="lifeExp", labels={
-    "year": "tiempo",
-    "lifeExp": "gasto",
+figExpensesEvolution = px.line(dfProvidersPayment, x="Nombre Fantasia", y="Importe", labels={
+    "Nombre Fantasia": "proveedor",
+    "Importe": "Dinero percibido",
 })
 figExpensesEvolution.data[0].line.color = "Red"
 
@@ -149,6 +173,20 @@ expensesEvolutionTab = html.Div(children=[
             html.H5("En esta seccion puede conocerse la evolución del gasto en el tiempo"),
         ], width=12, className='tab-title'
         ), justify="center"
+    ),
+    dbc.Row(
+        [dbc.Col([
+            dcc.DatePickerRange(
+                id='dateRangeExpensesEvolution',
+                min_date_allowed=dt(2020, 5, 1),
+                max_date_allowed=dt(2020, 5, 31),
+                start_date=dt(2020, 5, 1).date(),
+                end_date=dt(2020, 5, 31).date(),
+                display_format='D/M/Y',
+                calendar_orientation='horizontal'),
+        ], width=6, className='date-row'
+        ),
+        ], justify="center"
     ),
     dbc.Row(
         [
@@ -177,6 +215,20 @@ providersRankingTab = dbc.Container(children=[
             html.H5("Ranking de proveedores de acuerdo al gasto total"),
         ], width=12, className='tab-title'
         ), justify="center"
+    ),
+    dbc.Row(
+        [dbc.Col([
+            dcc.DatePickerRange(
+                id='dateRangeProvidersRanking',
+                min_date_allowed=dt(2020, 5, 1),
+                max_date_allowed=dt(2020, 5, 31),
+                start_date=dt(2020, 5, 1).date(),
+                end_date=dt(2020, 5, 31).date(),
+                display_format='D/M/Y',
+                calendar_orientation='horizontal'),
+        ], width=6, className='date-row'
+        ),
+        ], justify="center"
     ),
     dbc.Row(
         [
@@ -208,8 +260,20 @@ body = html.Div(
 
 app.layout = html.Div(children=[
     topNavBar,
-    dateSelector,
+    title,
     body])
+
+
+@app.callback([Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children')],
+              [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date')]
+              )
+def update_figure(initial_date, final_date):
+    initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
+    final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
+    filtered_df = utils.filter_by_date(df, initial_date, final_date)
+    revenue_data = utils.revenue_data(filtered_df)
+    return revenue_data[0], revenue_data[1], revenue_data[2]
+
 
 if __name__ == '__main__':
     app.run_server(debug=True, use_reloader=False)
