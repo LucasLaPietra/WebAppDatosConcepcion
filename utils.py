@@ -1,13 +1,16 @@
 from datetime import datetime as dt
 
 
-def filter_by_date(df,initial_date,final_date):
+def filter_by_date(df, initial_date, final_date):
     initial_year = initial_date.year
     final_year = final_date.year
     initial_month = initial_date.month
     final_month = final_date.month
     df_filter_year = df[(df['Año'] >= initial_year) & (df['Año'] <= final_year)]
-    df_filter_month = df_filter_year[(df['Mes'] >= initial_month) & (df['Mes'] <= final_month)]
+    df_filter_month = df_filter_year.loc[
+        ((df_filter_year['Mes'] >= initial_month) & (df_filter_year['Año'] == initial_year)) | (
+                    (df_filter_year['Mes'] <= final_month) & (df_filter_year['Año'] == final_year)) | (
+                    (df_filter_year['Año'] != final_year) & (df_filter_year['Año'] != initial_year))]
     return df_filter_month
 
 
