@@ -106,12 +106,6 @@ revenueTab = dbc.Container(children=[
     ),
 ])
 
-dfProvidersPayment = df.groupby(['Nombre Fantasia'], as_index=False)['Importe'].sum()
-figProvidersPayment = px.bar(dfProvidersPayment, x="Nombre Fantasia", y="Importe", labels={
-    "Nombre Fantasia": "proveedor",
-    "Importe": "Dinero percibido",
-}, color_continuous_scale="Peach", color="Importe")
-
 providersPaymentTab = html.Div(children=[
     dbc.Row(
         [
@@ -141,10 +135,10 @@ providersPaymentTab = html.Div(children=[
         [dbc.Col([
             dcc.DatePickerRange(
                 id='dateRangeProvidersPayment',
-                min_date_allowed=dt(2020, 5, 1),
-                max_date_allowed=dt(2020, 5, 31),
-                start_date=dt(2020, 5, 1).date(),
-                end_date=dt(2020, 5, 31).date(),
+                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
                 display_format='D/M/Y',
                 calendar_orientation='horizontal'),
         ], width=6, className='date-row'
@@ -154,14 +148,14 @@ providersPaymentTab = html.Div(children=[
     dbc.Row(
         [
             html.Div([
-                dcc.Graph(figure=figProvidersPayment)
+                dcc.Graph(id='providersPaymentGraph')
             ])
         ]
         , justify="center"
     ),
 ])
 
-figExpensesEvolution = px.line(dfProvidersPayment, x="Nombre Fantasia", y="Importe", labels={
+figExpensesEvolution = px.line(df, x="Nombre Fantasia", y="Importe", labels={
     "Nombre Fantasia": "proveedor",
     "Importe": "Dinero percibido",
 })
@@ -178,10 +172,10 @@ expensesEvolutionTab = html.Div(children=[
         [dbc.Col([
             dcc.DatePickerRange(
                 id='dateRangeExpensesEvolution',
-                min_date_allowed=dt(2020, 5, 1),
-                max_date_allowed=dt(2020, 5, 31),
-                start_date=dt(2020, 5, 1).date(),
-                end_date=dt(2020, 5, 31).date(),
+                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
                 display_format='D/M/Y',
                 calendar_orientation='horizontal'),
         ], width=6, className='date-row'
@@ -220,10 +214,10 @@ providersRankingTab = dbc.Container(children=[
         [dbc.Col([
             dcc.DatePickerRange(
                 id='dateRangeProvidersRanking',
-                min_date_allowed=dt(2020, 5, 1),
-                max_date_allowed=dt(2020, 5, 31),
-                start_date=dt(2020, 5, 1).date(),
-                end_date=dt(2020, 5, 31).date(),
+                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
                 display_format='D/M/Y',
                 calendar_orientation='horizontal'),
         ], width=6, className='date-row'
@@ -273,6 +267,21 @@ def update_figure(initial_date, final_date):
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
     revenue_data = utils.revenue_data(filtered_df)
     return revenue_data[0], revenue_data[1], revenue_data[2]
+
+
+@app.callback(Output('providersPaymentGraph', 'figure'),
+              [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date')]
+              )
+def update_figure(initial_date, final_date):
+    initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
+    final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
+    filtered_df = utils.filter_by_date(df, initial_date, final_date)
+    df_providers_payment = filtered_df.groupby(['Nombre Fantasia'], as_index=False)['Importe'].sum()
+    fig_providers_payment = px.bar(df_providers_payment, x="Nombre Fantasia", y="Importe", labels={
+        "Nombre Fantasia": "proveedor",
+        "Importe": "Dinero percibido",
+    }, color_continuous_scale="Peach", color="Importe")
+    return fig_providers_payment
 
 
 if __name__ == '__main__':
