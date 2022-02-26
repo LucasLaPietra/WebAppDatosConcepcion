@@ -118,14 +118,12 @@ providersPaymentTab = html.Div(children=[
             ),
             dbc.Col(
                 [
-                    dbc.DropdownMenu(
-                        label="Rubro",
-                        children=[
-                            dbc.DropdownMenuItem("Rubro 1"),
-                            dbc.DropdownMenuItem("Rubro 2"),
-                            dbc.DropdownMenuItem("Rubro 3"),
-                        ]
-                    )
+                    dcc.Dropdown(
+                        id='providersPaymentDropDown',
+                        options=[{'label': "Ninguno", 'value': "None"}],
+                        value="None",
+                        multi=False,
+                    ),
                 ], className='drop-down'
             )
 
@@ -162,11 +160,25 @@ figExpensesEvolution = px.line(df, x="Nombre Fantasia", y="Importe", labels={
 figExpensesEvolution.data[0].line.color = "Red"
 
 expensesEvolutionTab = html.Div(children=[
-    dbc.Row(
-        dbc.Col([
-            html.H5("En esta seccion puede conocerse la evolución del gasto en el tiempo"),
-        ], width=12, className='tab-title'
-        ), justify="center"
+dbc.Row(
+        [
+            dbc.Col(
+                [
+                    html.H5(
+                        "En esta seccion puede conocerse la evolución del gasto en el tiempo",
+                    ),
+                ], className='dropdown-tab-title', width=8
+            ),
+            dbc.Col(
+                [
+                    dcc.Dropdown(
+                        id='expensesEvolutionDropDown',
+                        multi=True,
+                    ),
+                ], className='drop-down'
+            )
+
+        ], justify="center", className='title-row'
     ),
     dbc.Row(
         [dbc.Col([
@@ -185,7 +197,7 @@ expensesEvolutionTab = html.Div(children=[
     dbc.Row(
         [
             html.Div([
-                dcc.Graph(figure=figExpensesEvolution)
+                dcc.Graph(id="expensesEvolutionGraph")
             ])
         ]
         , justify="center"
@@ -269,19 +281,51 @@ def update_figure(initial_date, final_date):
     return revenue_data[0], revenue_data[1], revenue_data[2]
 
 
-@app.callback(Output('providersPaymentGraph', 'figure'),
-              [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date')]
+@app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options')],
+              [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date'),
+               Input('providersPaymentDropDown', 'value')]
               )
-def update_figure(initial_date, final_date):
+def update_figure(initial_date, final_date, category):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
-    df_providers_payment = filtered_df.groupby(['Nombre Fantasia'], as_index=False)['Importe'].sum()
-    fig_providers_payment = px.bar(df_providers_payment, x="Nombre Fantasia", y="Importe", labels={
+    df_providers_payment = filtered_df.groupby(['Nombre Fantasia','Rubro'], as_index=False)['Importe'].sum()
+    categories = set(df_providers_payment['Rubro'])
+    dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
+    dict_filter.append({'label': "Ninguno", 'value': "None"})
+    df_filtered_by_category = utils.filter_by_category(df_providers_payment, category)
+    fig_providers_payment = px.bar(df_filtered_by_category, x="Nombre Fantasia", y="Importe", labels={
         "Nombre Fantasia": "proveedor",
         "Importe": "Dinero percibido",
     }, color_continuous_scale="Peach", color="Importe")
-    return fig_providers_payment
+    return fig_providers_payment, dict_filter
+
+
+@app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options')],
+              [Input('dateRangeExpensesEvolution', 'start_date'), Input('dateRangeExpensesEvolution', 'end_date'),
+               Input('expensesEvolutionDropDown', 'value')]
+              )
+def update_figure(initial_date, final_date, selected_categories):
+    initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
+    final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
+    filtered_df = utils.filter_by_date(df, initial_date, final_date)
+    categories = set(filtered_df['Rubro'])
+    dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
+    if (selected_categories is None) or (len(selected_categories) == 0):
+        df_new = utils.make_expenses_evolution_df(filtered_df, False)
+        fig_expenses_evolution = px.line(df_new, x="date", y="Importe", labels={
+            "date": "Fecha",
+            "Importe": "Dinero",
+        })
+        fig_expenses_evolution.data[0].line.color = "Red"
+    else:
+        df_new = utils.make_expenses_evolution_df(filtered_df, True)
+        df_categories_filtered = df_new[df_new['Rubro'].isin(selected_categories)]
+        fig_expenses_evolution = px.line(df_categories_filtered, x="date", y="Importe", color="Rubro", labels={
+            "date": "Fecha",
+            "Importe": "Dinero",
+        })
+    return fig_expenses_evolution, dict_filter
 
 
 if __name__ == '__main__':
