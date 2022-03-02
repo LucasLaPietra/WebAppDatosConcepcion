@@ -1,4 +1,5 @@
 from datetime import datetime as dt
+from dash import html
 
 
 def filter_by_date(df, initial_date, final_date):
@@ -39,3 +40,11 @@ def revenue_data(df):
     total_providers = len(df["Razon social"].value_counts())
     total_buy_orders = df["Cantidad de contratados"].sum()
     return [total_revenue, total_providers, total_buy_orders]
+
+
+def create_table_df(df):
+    filtered_df = df.groupby(['Nombre Fantasia', 'CUIL proveedor'], as_index=False)['Importe'].sum()
+    ordered_df = filtered_df.sort_values(by=['Importe'], ascending=False)
+    ordered_df['Nombre Fantasia'] = ordered_df['Nombre Fantasia'].apply(lambda x: x.capitalize())
+    ordered_df['Importe'] = ordered_df['Importe'].apply(lambda x: round(x, 2))
+    return ordered_df

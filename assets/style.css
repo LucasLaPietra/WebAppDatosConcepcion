@@ -32,6 +32,8 @@
 
 .centered-table{
     text-align: center;
+    height: 400px;
+    overflow: scroll;
 }
 
 .revenue-column{

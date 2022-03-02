@@ -160,7 +160,7 @@ figExpensesEvolution = px.line(df, x="Nombre Fantasia", y="Importe", labels={
 figExpensesEvolution.data[0].line.color = "Red"
 
 expensesEvolutionTab = html.Div(children=[
-dbc.Row(
+    dbc.Row(
         [
             dbc.Col(
                 [
@@ -236,19 +236,7 @@ providersRankingTab = dbc.Container(children=[
         ),
         ], justify="center"
     ),
-    dbc.Row(
-        [
-            dbc.Table(
-                # using the same table as in the above example
-                table_header + table_body,
-                bordered=True,
-                hover=True,
-                responsive=True,
-                striped=True,
-            )
-        ]
-        , justify="center", className='centered-table'
-    ),
+    dbc.Row(justify="center", className='centered-table', id='providersRankingTable'),
 ])
 
 body = html.Div(
@@ -270,9 +258,10 @@ app.layout = html.Div(children=[
     body])
 
 
-@app.callback([Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children')],
-              [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date')]
-              )
+@app.callback(
+    [Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children')],
+    [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date')]
+    )
 def update_figure(initial_date, final_date):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
@@ -289,7 +278,7 @@ def update_figure(initial_date, final_date, category):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
-    df_providers_payment = filtered_df.groupby(['Nombre Fantasia','Rubro'], as_index=False)['Importe'].sum()
+    df_providers_payment = filtered_df.groupby(['Nombre Fantasia', 'Rubro'], as_index=False)['Importe'].sum()
     categories = set(df_providers_payment['Rubro'])
     dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
     dict_filter.append({'label': "Ninguno", 'value': "None"})
@@ -326,6 +315,23 @@ def update_figure(initial_date, final_date, selected_categories):
             "Importe": "Dinero",
         })
     return fig_expenses_evolution, dict_filter
+
+
+@app.callback(Output('providersRankingTable', 'children'),
+              [Input('dateRangeProvidersRanking', 'start_date'), Input('dateRangeProvidersRanking', 'end_date')]
+              )
+def update_figure(initial_date, final_date):
+    initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
+    final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
+    filtered_df = utils.filter_by_date(df, initial_date, final_date)
+    table_df = utils.create_table_df(filtered_df)
+    table = dbc.Table.from_dataframe(
+        table_df,
+        bordered=True,
+        hover=True,
+        responsive=True,
+        striped=True)
+    return table
 
 
 if __name__ == '__main__':
