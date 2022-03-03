@@ -298,9 +298,9 @@ body = html.Div(
         html.Hr(),
         dbc.Row(dbc.Col(providersPaymentTab)),
         html.Hr(),
-        dbc.Row(dbc.Col(expensesEvolutionTab)),
-        html.Hr(),
         dbc.Row(dbc.Col(providersRankingTab)),
+        html.Hr(),
+        dbc.Row(dbc.Col(expensesEvolutionTab)),
         html.Hr(),
         dbc.Row(dbc.Col(providersSearchTab)),
     ]
