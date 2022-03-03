@@ -114,20 +114,10 @@ providersPaymentTab = html.Div(children=[
                     html.H5(
                         "En esta seccion puede conocerse el dinero percibido por diferentes proveedores en un rubro",
                     ),
-                ], className='dropdown-tab-title', width=8
+                ], className='tab-title'
             ),
-            dbc.Col(
-                [
-                    dcc.Dropdown(
-                        id='providersPaymentDropDown',
-                        options=[{'label': "Ninguno", 'value': "None"}],
-                        value="None",
-                        multi=False,
-                    ),
-                ], className='drop-down'
-            )
 
-        ], justify="center", className='title-row'
+        ], justify="center"
     ),
     dbc.Row(
         [dbc.Col([
@@ -145,11 +135,46 @@ providersPaymentTab = html.Div(children=[
     ),
     dbc.Row(
         [
-            html.Div([
-                dcc.Graph(id='providersPaymentGraph')
-            ])
+            dbc.Col(
+                [
+                    html.P('Rubro:'),
+                    dcc.Dropdown(
+                        id='providersPaymentDropDown',
+                        options=[{'label': "Ninguno", 'value': "None"}],
+                        value="None",
+                        multi=False,
+                        clearable=False,
+                        className='drop-down'
+                    ),
+                    html.P('Orientacion:'),
+                    dcc.Dropdown(
+                        id='providersPaymentOrientationDropDown',
+                        options=[{'label': "Horizontal", 'value': "Horizontal"},
+                                 {'label': "Vertical", 'value': "Vertical"}],
+                        value="Horizontal",
+                        multi=False,
+                        clearable=False,
+                        className='drop-down'
+                    ),
+                    html.P('Ordenar por:'),
+                    dcc.Dropdown(
+                        id='providersPaymentOrderDropDown',
+                        options=[{'label': "Nombre", 'value': "Nombre Fantasia"},
+                                 {'label': "Importe", 'value': "Importe"}],
+                        value="Importe",
+                        multi=False,
+                        clearable=False,
+                        className='drop-down'
+                    ),
+                ], className='drop-down-col'
+            ),
+            dbc.Col(
+                html.Div([
+                    dcc.Graph(id='providersPaymentGraph')
+                ]), width=10
+            ),
         ]
-        , justify="center"
+        , justify="center", align="center"
     ),
 ])
 
@@ -290,7 +315,7 @@ app.layout = html.Div(children=[
 @app.callback(
     [Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children')],
     [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date')]
-    )
+)
 def update_figure(initial_date, final_date):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
@@ -301,21 +326,28 @@ def update_figure(initial_date, final_date):
 
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options')],
               [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date'),
-               Input('providersPaymentDropDown', 'value')]
+               Input('providersPaymentDropDown', 'value'), Input('providersPaymentOrientationDropDown', 'value'),
+               Input('providersPaymentOrderDropDown', 'value')]
               )
-def update_figure(initial_date, final_date, category):
+def update_figure(initial_date, final_date, category, orientation, order):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
-    df_providers_payment = filtered_df.groupby(['Nombre Fantasia', 'Rubro'], as_index=False)['Importe'].sum()
+    df_providers_payment = utils.make_providers_payment_df(filtered_df, order)
     categories = set(df_providers_payment['Rubro'])
     dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
     dict_filter.append({'label': "Ninguno", 'value': "None"})
     df_filtered_by_category = utils.filter_by_category(df_providers_payment, category)
-    fig_providers_payment = px.bar(df_filtered_by_category, x="Nombre Fantasia", y="Importe", labels={
-        "Nombre Fantasia": "proveedor",
-        "Importe": "Dinero percibido",
-    }, color_continuous_scale="Peach", color="Importe")
+    if orientation == 'Horizontal':
+        fig_providers_payment = px.bar(df_filtered_by_category, x="Importe", y="Nombre Fantasia", labels={
+            "Nombre Fantasia": "proveedor",
+            "Importe": "Dinero percibido",
+        }, color_continuous_scale="Peach", color="Importe", orientation='h')
+    else:
+        fig_providers_payment = px.bar(df_filtered_by_category, x="Nombre Fantasia", y="Importe", labels={
+            "Nombre Fantasia": "proveedor",
+            "Importe": "Dinero percibido",
+        }, color_continuous_scale="Peach", color="Importe", orientation='v')
     return fig_providers_payment, dict_filter
 
 

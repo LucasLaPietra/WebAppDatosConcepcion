@@ -56,7 +56,15 @@
     text-align: center;
 }
 
-.drop-down{
+.drop-down-col{
     text-align: left;
+    margin-left: 15px;
 }
 
+.drop-down{
+    margin-bottom:10px;
+}
+
+p{
+    margin-bottom:0px;
+}
