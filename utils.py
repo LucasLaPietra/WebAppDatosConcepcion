@@ -42,9 +42,17 @@ def revenue_data(df):
     return [total_revenue, total_providers, total_buy_orders]
 
 
-def create_table_df(df):
+def create_ranking_table_df(df):
     filtered_df = df.groupby(['Nombre Fantasia', 'CUIL proveedor'], as_index=False)['Importe'].sum()
     ordered_df = filtered_df.sort_values(by=['Importe'], ascending=False)
     ordered_df['Nombre Fantasia'] = ordered_df['Nombre Fantasia'].apply(lambda x: x.capitalize())
     ordered_df['Importe'] = ordered_df['Importe'].apply(lambda x: round(x, 2))
     return ordered_df
+
+
+def create_search_table_df(df, search_input):
+    input_upper = search_input.upper()
+    filtered_df = df[df['Nombre Fantasia'].str.contains(input_upper) | df['Razon social'].str.contains(input_upper)]
+    filtered_df['Nombre Fantasia'] = filtered_df['Nombre Fantasia'].apply(lambda x: x.capitalize())
+    filtered_df['Razon social'] = filtered_df['Razon social'].apply(lambda x: x.capitalize())
+    return filtered_df

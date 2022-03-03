@@ -204,17 +204,6 @@ expensesEvolutionTab = html.Div(children=[
     ),
 ])
 
-table_header = [
-    html.Thead(html.Tr([html.Th("Proveedor"), html.Th("Cuit"), html.Th("Importe Total")]))
-]
-
-row1 = html.Tr([html.Td("Proveedor 1"), html.Td("00-00000000-0"), html.Td("$1000")])
-row2 = html.Tr([html.Td("Proveedor 2"), html.Td("00-00000000-0"), html.Td("$1000")])
-row3 = html.Tr([html.Td("Proveedor 3"), html.Td("00-00000000-0"), html.Td("$1000")])
-row4 = html.Tr([html.Td("Proveedor 4"), html.Td("00-00000000-0"), html.Td("$1000")])
-
-table_body = [html.Tbody([row1, row2, row3, row4])]
-
 providersRankingTab = dbc.Container(children=[
     dbc.Row(
         dbc.Col([
@@ -239,6 +228,44 @@ providersRankingTab = dbc.Container(children=[
     dbc.Row(justify="center", className='centered-table', id='providersRankingTable'),
 ])
 
+providersSearchTab = dbc.Container(children=[
+    dbc.Row(
+        [
+            dbc.Col(
+                [
+                    html.H5(
+                        "En esta seccion puede buscarse un proveedor de acuerdo a una palabra clave",
+                    ),
+                ], className='dropdown-tab-title', width=8
+            ),
+            dbc.Col(
+                [
+                    dbc.Input(placeholder="Ingrese nombre o razon social del proveedor",
+                              type="text",
+                              id="providersSearchInput",
+                              value="")
+                ], className='drop-down'
+            )
+
+        ], justify="center", className='title-row'
+    ),
+    dbc.Row(
+        [dbc.Col([
+            dcc.DatePickerRange(
+                id='dateRangeProvidersSearch',
+                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                display_format='D/M/Y',
+                calendar_orientation='horizontal'),
+        ], width=6, className='date-row'
+        ),
+        ], justify="center"
+    ),
+    dbc.Row(justify="center", className='centered-table', id='providersSearchTable'),
+])
+
 body = html.Div(
     [
         html.Hr(),
@@ -249,6 +276,8 @@ body = html.Div(
         dbc.Row(dbc.Col(expensesEvolutionTab)),
         html.Hr(),
         dbc.Row(dbc.Col(providersRankingTab)),
+        html.Hr(),
+        dbc.Row(dbc.Col(providersSearchTab)),
     ]
 )
 
@@ -324,7 +353,28 @@ def update_figure(initial_date, final_date):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
-    table_df = utils.create_table_df(filtered_df)
+    table_df = utils.create_ranking_table_df(filtered_df)
+    table = dbc.Table.from_dataframe(
+        table_df,
+        bordered=True,
+        hover=True,
+        responsive=True,
+        striped=True)
+    return table
+
+
+@app.callback(Output('providersSearchTable', 'children'),
+              [
+                  Input('dateRangeProvidersRanking', 'start_date'),
+                  Input('dateRangeProvidersRanking', 'end_date'),
+                  Input("providersSearchInput", "value")
+              ]
+              )
+def update_figure(initial_date, final_date, search_input):
+    initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
+    final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
+    filtered_df = utils.filter_by_date(df, initial_date, final_date)
+    table_df = utils.create_search_table_df(filtered_df, search_input)
     table = dbc.Table.from_dataframe(
         table_df,
         bordered=True,
