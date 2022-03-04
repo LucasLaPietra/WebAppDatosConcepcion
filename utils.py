@@ -38,7 +38,7 @@ def make_expenses_evolution_df(df, filter_by_category):
         filtered_df = df.groupby(['date','Rubro'], as_index=False)['Importe'].sum()
     else:
         filtered_df = df.groupby(['date'], as_index=False)['Importe'].sum()
-    return filtered_df
+    return filtered_df.sort_values(by=['date'])
 
 
 def revenue_data(df):

@@ -166,6 +166,8 @@ providersPaymentTab = html.Div(children=[
                         clearable=False,
                         className='drop-down'
                     ),
+                    dbc.Button("Descargar Datos", color="primary", className="me-1", id='providersPaymentDownloadButton'),
+                    dcc.Download(id="providersPaymentDownload")
                 ], className='drop-down-col'
             ),
             dbc.Col(
@@ -324,12 +326,14 @@ def update_figure(initial_date, final_date):
     return revenue_data[0], revenue_data[1], revenue_data[2]
 
 
-@app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options')],
+@app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),
+               Output("providersPaymentDownload", "data")],
               [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date'),
                Input('providersPaymentDropDown', 'value'), Input('providersPaymentOrientationDropDown', 'value'),
-               Input('providersPaymentOrderDropDown', 'value')]
+               Input('providersPaymentOrderDropDown', 'value'), Input('providersPaymentDownloadButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date, category, orientation, order):
+def update_figure(initial_date, final_date, category, orientation, order, button):
+    ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
@@ -348,7 +352,10 @@ def update_figure(initial_date, final_date, category, orientation, order):
             "Nombre Fantasia": "proveedor",
             "Importe": "Dinero percibido",
         }, color_continuous_scale="Peach", color="Importe", orientation='v')
-    return fig_providers_payment, dict_filter
+    if ctx.triggered[0]['prop_id'] == 'providersPaymentDownloadButton.n_clicks':
+        return fig_providers_payment, dict_filter, dcc.send_data_frame(df_filtered_by_category.to_csv, "data.csv")
+    else:
+        return fig_providers_payment, dict_filter, dash.no_update
 
 
 @app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options')],
@@ -369,9 +376,9 @@ def update_figure(initial_date, final_date, selected_categories):
         })
         fig_expenses_evolution.data[0].line.color = "Red"
     else:
-        df_new = utils.make_expenses_evolution_df(filtered_df, True)
-        df_categories_filtered = df_new[df_new['Rubro'].isin(selected_categories)]
-        fig_expenses_evolution = px.line(df_categories_filtered, x="date", y="Importe", color="Rubro", labels={
+        df_categories_filtered = filtered_df[filtered_df['Rubro'].isin(selected_categories)]
+        df_new = utils.make_expenses_evolution_df(df_categories_filtered, True)
+        fig_expenses_evolution = px.line(df_new, x="date", y="Importe", color="Rubro", labels={
             "date": "Fecha",
             "Importe": "Dinero",
         })
