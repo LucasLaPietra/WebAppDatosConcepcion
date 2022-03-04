@@ -166,7 +166,8 @@ providersPaymentTab = html.Div(children=[
                         clearable=False,
                         className='drop-down'
                     ),
-                    dbc.Button("Descargar Datos", color="primary", className="me-1", id='providersPaymentDownloadButton'),
+                    dbc.Button("Descargar Datos", color="primary", className="me-1",
+                               id='providersPaymentDownloadButton'),
                     dcc.Download(id="providersPaymentDownload")
                 ], className='drop-down-col'
             ),
@@ -194,17 +195,8 @@ expensesEvolutionTab = html.Div(children=[
                     html.H5(
                         "En esta seccion puede conocerse la evolución del gasto en el tiempo",
                     ),
-                ], className='dropdown-tab-title', width=8
+                ], className='tab-title'
             ),
-            dbc.Col(
-                [
-                    dcc.Dropdown(
-                        id='expensesEvolutionDropDown',
-                        multi=True,
-                    ),
-                ], className='drop-down'
-            )
-
         ], justify="center", className='title-row'
     ),
     dbc.Row(
@@ -223,11 +215,24 @@ expensesEvolutionTab = html.Div(children=[
     ),
     dbc.Row(
         [
-            html.Div([
-                dcc.Graph(id="expensesEvolutionGraph")
-            ])
+            dbc.Col(
+                [
+                    html.P('Rubros a comparar:'),
+                    dcc.Dropdown(
+                        id='expensesEvolutionDropDown',
+                        multi=True,
+                        className='drop-down'
+                    ),
+                    dbc.Button("Descargar Datos", color="primary", className="me-1",
+                               id='expensesEvolutionDownloadButton'),
+                    dcc.Download(id="expensesEvolutionDownload")
+                ], className='drop-down-col'
+            ),
+            dbc.Col([
+                html.Div(dcc.Graph(id="expensesEvolutionGraph"))
+            ], width=10),
         ]
-        , justify="center"
+        , justify="center", align="center"
     ),
 ])
 
@@ -236,7 +241,8 @@ providersRankingTab = dbc.Container(children=[
         dbc.Col([
             html.H5("Ranking de proveedores de acuerdo al gasto total"),
         ], width=12, className='tab-title'
-        ), justify="center"
+        ),
+        justify="center"
     ),
     dbc.Row(
         [dbc.Col([
@@ -252,7 +258,9 @@ providersRankingTab = dbc.Container(children=[
         ),
         ], justify="center"
     ),
-    dbc.Row(justify="center", className='centered-table', id='providersRankingTable'),
+    dbc.Row(
+        justify="center", className='centered-table', id='providersRankingTable'
+    ),
 ])
 
 providersSearchTab = dbc.Container(children=[
@@ -358,11 +366,13 @@ def update_figure(initial_date, final_date, category, orientation, order, button
         return fig_providers_payment, dict_filter, dash.no_update
 
 
-@app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options')],
+@app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options'),
+               Output("expensesEvolutionDownload", "data")],
               [Input('dateRangeExpensesEvolution', 'start_date'), Input('dateRangeExpensesEvolution', 'end_date'),
-               Input('expensesEvolutionDropDown', 'value')]
+               Input('expensesEvolutionDropDown', 'value'), Input('expensesEvolutionDownloadButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date, selected_categories):
+def update_figure(initial_date, final_date, selected_categories, button):
+    ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
@@ -382,7 +392,10 @@ def update_figure(initial_date, final_date, selected_categories):
             "date": "Fecha",
             "Importe": "Dinero",
         })
-    return fig_expenses_evolution, dict_filter
+    if ctx.triggered[0]['prop_id'] == 'expensesEvolutionDownloadButton.n_clicks':
+        return fig_expenses_evolution, dict_filter, dcc.send_data_frame(df_new.to_csv, "data.csv")
+    else:
+        return fig_expenses_evolution, dict_filter, dash.no_update
 
 
 @app.callback(Output('providersRankingTable', 'children'),
