@@ -13,7 +13,8 @@ import re
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 server = flask.Flask(__name__)
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.JOURNAL, dbc.icons.BOOTSTRAP], server=server)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP],
+                server=server)
 app.title = 'Visualizacion datos contratos publicos'
 
 df = pd.read_csv('https://github.com/LucasLaPietra/WebScraperDatosConcepcion/blob/main/webscraping-app/contratos'
@@ -26,112 +27,172 @@ minFirstYearMonth = df[(df['Año'] == minYear)]['Mes'].min()
 maxActualYearMonth = df[(df['Año'] == maxYear)]['Mes'].max()
 minActualYearMonth = df[(df['Año'] == maxYear)]['Mes'].min()
 
-topNavBar = dbc.Navbar(
-    children=[
-        html.Div(
-            # Use row and col to control vertical alignment of logo / brand
-            dbc.Row(
-                [
-                    dbc.Col([
-                        html.H1(children='Visualizacion de datos de contratos publicos de Concepcion del Uruguay'),
-                        html.H5(children='Datos Concepcion')
-                    ])
-                ],
-                align="center", className='nav-bar'
-            )
-        )
-    ],
-    color="primary",
-    dark=True,
-    sticky="top"
+topNavBar = html.Div(
+    dbc.Row(
+        [
+            dbc.Col([
+                dbc.Row(
+                    [
+                        html.H1(children='Visualización de datos'),
+                        html.H1(children='de CONTRATOS PÚBLICOS'),
+                        html.H3(children='de la Municipalidad de Concepción del Uruguay'),
+                    ],
+                    className='top-bar-top-row text-white'
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col([
+                            html.H1(children='DATOS'),
+                            html.H3(children='CONCEPCIÓN'),
+                        ], width=3, className='top-bar-bottom-row-column')
+
+                    ],
+                    className='top-bar-bottom-row text-white', justify="end"
+                )
+
+            ])
+        ],
+        align="center", className='top-bar'
+    )
 )
 
 title = dbc.Container(
     children=[
-        dbc.Row([html.H4("Actualmente la municipalidad de concepcion del uruguay informa en su sitio",
+        dbc.Row([html.H4("Actualmente la municipalidad de concepcion del uruguay informa en su sitio los siguentes "
+                         "datos",
                          className='centered-subtitle'),
                  ], justify="center"
                 )
-    ]
+    ], className="h-100 p-5 bg-light border rounded-3"
 )
 
 revenueTab = dbc.Container(children=[
     dbc.Row(
-        dbc.Col([
-            html.H5("En esta seccion pueden conocerse los gastos del municipio en un periodo determinado"),
-        ], width=12, className='tab-title'
-        ), justify="center"
-    ),
-    dbc.Row(
-        [dbc.Col([
-            dcc.DatePickerRange(
-                id='dateRangeRevenue',
-                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
-                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
-                start_date=dt(maxYear, minActualYearMonth, 1).date(),
-                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
-                display_format='D/M/Y',
-                calendar_orientation='horizontal'),
-        ], width=6, className='date-row'
-        ),
-        ], justify="center"
+        [
+            dbc.Col([
+                html.H2('GASTOS DEL MUNICIPIO'),
+                html.H5("En esta seccion pueden conocerse los gastos del municipio en un periodo determinado"),
+            ], className='tab-title'
+            ),
+            dbc.Col([
+                dbc.Row([
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            id='dateRangeRevenue',
+                            min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                            max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                            start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                            end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                            display_format='D/M/Y',
+                            calendar_orientation='horizontal'),
+                        width='auto', align='center')
+                    ,
+                    dbc.Col(
+                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                                   id='revenueDateButton'),
+                        width='auto', align='center'
+                    )
+
+                ],
+                    justify="end", className='date-row'
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        dbc.Button(
+                            html.Span([html.I(className="bi bi-cloud-download"), "  Descargar Datos"]),
+                            color="primary",
+                            id='revenueDownloadButton'),
+                        width='auto'),
+                    justify="end"
+                ),
+
+                dcc.Download(id="revenueDownload")
+
+            ], className='date-col'
+            )],
+        justify="center"
     ),
     dbc.Row(
         [
             dbc.Col([
                 dbc.Card([
-                    html.Img(src=app.get_asset_url("file-lines-solid.svg"), className='revenue-icon'),
-                    html.H4("Total de ordenes de compra por:"),
+                    html.H5("Total de ordenes de compra por:"),
+                    html.Img(src=app.get_asset_url("file-lines-solid.svg"), className='revenue-icon')
+                ], color="secondary", inverse=True, className='top-card'),
+                dbc.Card([
                     html.H3(id='totalRevenue'),
-                ])
-            ], className='revenue-column'
+                ], color="secondary", inverse=True, className='bottom-card')
+            ], className='revenue-column', align="center", width='auto'
             ),
             dbc.Col([
                 dbc.Card([
+                    html.H5("Cantidad de proveedores:"),
                     html.Img(src=app.get_asset_url("clipboard-solid.svg"), className='revenue-icon'),
-                    html.H4("Cantidad de proveedores:"),
+                ], color="secondary", inverse=True, className='top-card'),
+                dbc.Card([
                     html.H3(id='totalProviders'),
-                ])
-            ], className='revenue-column'
+                ], color="secondary", inverse=True, className='bottom-card')
+            ], className='revenue-column', align="center", width='auto'
             ),
             dbc.Col([
                 dbc.Card([
-                    html.Img(src=app.get_asset_url("dolly-solid.svg"), className='revenue-icon'),
-                    html.H4("Cantidad de ordenes de compra:"),
+                    html.H5("Cantidad de ordenes de compra:"),
+                    html.Img(src=app.get_asset_url("dolly-solid.svg"), className='revenue-icon')
+                ], color="secondary", inverse=True, className='top-card'),
+                dbc.Card([
                     html.H3(id='totalBuyOrders'),
-                ])
-            ], className='revenue-column'
+                ], color="secondary", inverse=True, className='bottom-card')
+            ], className='revenue-column', align="center", width='auto'
             )]
         , justify="center"
     ),
-])
+], className="h-100 p-5 text-white bg-dark rounded-3")
 
-providersPaymentTab = html.Div(children=[
+providersPaymentTab = dbc.Container(children=[
     dbc.Row(
         [
-            dbc.Col(
-                [
-                    html.H5(
-                        "En esta seccion puede conocerse el dinero percibido por diferentes proveedores en un rubro",
-                    ),
-                ], className='tab-title'
+            dbc.Col([
+                html.H2('TOTAL CONTRATACIONES MEDIDO EN PESOS'),
+                html.H5("En esta seccion puede conocerse el dinero percibido por diferentes proveedores en un rubro"),
+            ], className='tab-title'
             ),
+            dbc.Col([
+                dbc.Row([
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            id='dateRangeProvidersPayment',
+                            min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                            max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                            start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                            end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                            display_format='D/M/Y',
+                            calendar_orientation='horizontal'),
+                        width='auto', align='center')
+                    ,
+                    dbc.Col(
+                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                                   id='ProvidersPaymentDateButton'),
+                        width='auto', align='center'
+                    )
 
-        ], justify="center"
-    ),
-    dbc.Row(
-        [dbc.Col([
-            dcc.DatePickerRange(
-                id='dateRangeProvidersPayment',
-                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
-                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
-                start_date=dt(maxYear, minActualYearMonth, 1).date(),
-                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
-                display_format='D/M/Y',
-                calendar_orientation='horizontal'),
-        ], width=6, className='date-row'
-        ),
-        ], justify="center"
+                ],
+                    justify="end", className='date-row'
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        dbc.Button(
+                            html.Span([html.I(className="bi bi-cloud-download"), "  Descargar Datos"]),
+                            color="primary",
+                            id='providersPaymentDownloadButton'),
+                        width='auto'),
+                    justify="end"
+                ),
+
+                dcc.Download(id="providersPaymentDownload")
+
+            ], className='date-col'
+            )],
+        justify="center"
     ),
     dbc.Row(
         [
@@ -166,20 +227,18 @@ providersPaymentTab = html.Div(children=[
                         clearable=False,
                         className='drop-down'
                     ),
-                    dbc.Button("Descargar Datos", color="primary", className="me-1",
-                               id='providersPaymentDownloadButton'),
-                    dcc.Download(id="providersPaymentDownload")
-                ], className='drop-down-col'
+                ], className='drop-down-col', width=4
             ),
-            dbc.Col(
-                html.Div([
-                    dcc.Graph(id='providersPaymentGraph')
-                ]), width=10
-            ),
-        ]
-        , justify="center", align="center"
+        ]),
+    dbc.Row([
+        dbc.Col(
+            html.Div([
+                dcc.Graph(id='providersPaymentGraph')
+            ]), width=10
+        ),
+    ], justify="center", align="center"
     ),
-])
+], className="h-100 p-5 bg-light border rounded-3")
 
 figExpensesEvolution = px.line(df, x="Nombre Fantasia", y="Importe", labels={
     "Nombre Fantasia": "proveedor",
@@ -187,31 +246,51 @@ figExpensesEvolution = px.line(df, x="Nombre Fantasia", y="Importe", labels={
 })
 figExpensesEvolution.data[0].line.color = "Red"
 
-expensesEvolutionTab = html.Div(children=[
+expensesEvolutionTab = dbc.Container(children=[
     dbc.Row(
         [
-            dbc.Col(
-                [
-                    html.H5(
-                        "En esta seccion puede conocerse la evolución del gasto en el tiempo",
-                    ),
-                ], className='tab-title'
+            dbc.Col([
+                html.H2('EVOLUCION DEL GASTO POR RUBRO'),
+                html.H5("En esta seccion puede conocerse la evolución del gasto en el tiempo"),
+            ], className='tab-title'
             ),
-        ], justify="center", className='title-row'
-    ),
-    dbc.Row(
-        [dbc.Col([
-            dcc.DatePickerRange(
-                id='dateRangeExpensesEvolution',
-                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
-                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
-                start_date=dt(maxYear, minActualYearMonth, 1).date(),
-                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
-                display_format='D/M/Y',
-                calendar_orientation='horizontal'),
-        ], width=6, className='date-row'
-        ),
-        ], justify="center"
+            dbc.Col([
+                dbc.Row([
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            id='dateRangeExpensesEvolution',
+                            min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                            max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                            start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                            end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                            display_format='D/M/Y',
+                            calendar_orientation='horizontal'),
+                        width='auto', align='center')
+                    ,
+                    dbc.Col(
+                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                                   id='expensesEvolutionDateButton'),
+                        width='auto', align='center'
+                    )
+
+                ],
+                    justify="end", className='date-row'
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        dbc.Button(
+                            html.Span([html.I(className="bi bi-cloud-download"), "  Descargar Datos"]),
+                            color="primary",
+                            id='expensesEvolutionDownloadButton'),
+                        width='auto'),
+                    justify="end"
+                ),
+
+                dcc.Download(id="expensesEvolutionDownload")
+
+            ], className='date-col'
+            )],
+        justify="center"
     ),
     dbc.Row(
         [
@@ -223,83 +302,105 @@ expensesEvolutionTab = html.Div(children=[
                         multi=True,
                         className='drop-down'
                     ),
-                    dbc.Button("Descargar Datos", color="primary", className="me-1",
-                               id='expensesEvolutionDownloadButton'),
-                    dcc.Download(id="expensesEvolutionDownload")
                 ], className='drop-down-col'
             ),
-            dbc.Col([
-                html.Div(dcc.Graph(id="expensesEvolutionGraph"))
-            ], width=10),
         ]
+    ),
+    dbc.Row([
+        dbc.Col([
+            html.Div(dcc.Graph(id="expensesEvolutionGraph"))
+        ], width=10),
+    ]
         , justify="center", align="center"
     ),
-])
+], className="h-100 p-5 bg-light border rounded-3")
 
 providersRankingTab = dbc.Container(children=[
     dbc.Row(
-        dbc.Col([
-            html.H5("Ranking de proveedores de acuerdo al gasto total"),
-        ], width=12, className='tab-title'
-        ),
+        [
+            dbc.Col([
+                html.H2('RANKING DE PROVEEDORES DE ACUERDO AL GASTO TOTAL'),
+            ], className='tab-title'
+            ),
+            dbc.Col([
+                dbc.Row([
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            id='dateRangeProvidersRanking',
+                            min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                            max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                            start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                            end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                            display_format='D/M/Y',
+                            calendar_orientation='horizontal'),
+                        width='auto', align='center')
+                    ,
+                    dbc.Col(
+                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                                   id='ProvidersRankingDateButton'),
+                        width='auto', align='center'
+                    )
+
+                ],
+                    justify="end", className='date-row'
+                ),
+            ], className='date-col'
+            )],
         justify="center"
-    ),
-    dbc.Row(
-        [dbc.Col([
-            dcc.DatePickerRange(
-                id='dateRangeProvidersRanking',
-                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
-                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
-                start_date=dt(maxYear, minActualYearMonth, 1).date(),
-                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
-                display_format='D/M/Y',
-                calendar_orientation='horizontal'),
-        ], width=6, className='date-row'
-        ),
-        ], justify="center"
     ),
     dbc.Row(
         justify="center", className='centered-table', id='providersRankingTable'
     ),
-])
+], className="h-100 p-5 bg-light border rounded-3")
 
 providersSearchTab = dbc.Container(children=[
     dbc.Row(
         [
-            dbc.Col(
-                [
-                    html.H5(
-                        "En esta seccion puede buscarse un proveedor de acuerdo a una palabra clave",
-                    ),
-                ], className='dropdown-tab-title', width=8
+            dbc.Col([
+                html.H2('LISTADO DE PROVEEDORES'),
+                html.H5("En esta seccion puede buscarse un proveedor de acuerdo a una palabra clave"),
+            ], className='tab-title'
             ),
+            dbc.Col([
+                dbc.Row([
+                    dbc.Col(
+                        dcc.DatePickerRange(
+                            id='dateRangeProvidersSearch',
+                            min_date_allowed=dt(minYear, minFirstYearMonth, 1),
+                            max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
+                            start_date=dt(maxYear, minActualYearMonth, 1).date(),
+                            end_date=dt(maxYear, maxActualYearMonth, 31).date(),
+                            display_format='D/M/Y',
+                            calendar_orientation='horizontal'),
+                        width='auto', align='center')
+                    ,
+                    dbc.Col(
+                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                                   id='providersSearchDateButton'),
+                        width='auto', align='center'
+                    )
+
+                ],
+                    justify="end", className='date-row'
+                ),
+            ], className='date-col'
+            )],
+        justify="center"
+    ),
+    dbc.Row(
+        [
             dbc.Col(
                 [
                     dbc.Input(placeholder="Ingrese nombre o razon social del proveedor",
                               type="text",
                               id="providersSearchInput",
                               value="")
-                ], className='drop-down'
+                ], className='drop-down', width=4
             )
-
         ], justify="center", className='title-row'
     ),
-    dbc.Row(
-        [dbc.Col([
-            dcc.DatePickerRange(
-                id='dateRangeProvidersSearch',
-                min_date_allowed=dt(minYear, minFirstYearMonth, 1),
-                max_date_allowed=dt(maxYear, maxActualYearMonth, 31),
-                start_date=dt(maxYear, minActualYearMonth, 1).date(),
-                end_date=dt(maxYear, maxActualYearMonth, 31).date(),
-                display_format='D/M/Y',
-                calendar_orientation='horizontal'),
-        ], width=6, className='date-row'
-        ),
-        ], justify="center"
-    ),
     dbc.Row(justify="center", className='centered-table', id='providersSearchTable'),
-])
+], className="h-100 p-5 bg-light border rounded-3")
 
 body = html.Div(
     [
