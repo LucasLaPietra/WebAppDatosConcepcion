@@ -106,6 +106,37 @@ h1{
     margin-bottom:10px;
 }
 
+.footer-row{
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.footer-logo{
+    height: 80px;
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+.footer-social-column{
+    text-align: center;
+}
+
+.footer-social-row{
+    text-align: center;
+}
+
+.footer-social-icon{
+    height: 48px;
+    margin-left: auto;
+    margin-right: auto;
+    margin: 10px;
+    filter: invert(1);
+}
+
 p{
     margin-bottom:0px;
+}
+
+a{
+color: white;
 }

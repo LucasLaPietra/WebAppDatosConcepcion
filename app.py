@@ -402,18 +402,33 @@ providersSearchTab = dbc.Container(children=[
     dbc.Row(justify="center", className='centered-table', id='providersSearchTable'),
 ], className="h-100 p-5 bg-light border rounded-3")
 
+footer = dbc.Row(
+    dbc.Col(
+        [
+            html.Img(src=app.get_asset_url('logo.png'), className='footer-logo'),
+            html.H3(['UN PROYECTO DE ', html.B('DATOS CONCEPCIÓN')]),
+            html.H5('Argentina - Latam | info@desconfio.org'),
+            html.H5(['Aplicación desarrollada por ',
+                     html.A('Lucas La Pietra',
+                            href='https://www.linkedin.com/in/lucas-la-pietra-0b1ab6194/')
+                     ]),
+            dbc.Row([
+                dbc.Col(html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'), href=''), width=1, className='footer-social-column'),
+                dbc.Col(html.A(html.Img(src=app.get_asset_url("twitter.svg"), className='footer-social-icon'), href=''), width=1),
+                dbc.Col(html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'), href=''), width=1)
+            ], className='footer-social-row', justify="center")
+        ]
+    ), className='bg-dark footer-row text-white', justify="center"
+)
+
 body = html.Div(
     [
-        html.Hr(),
         dbc.Row(dbc.Col(revenueTab)),
-        html.Hr(),
         dbc.Row(dbc.Col(providersPaymentTab)),
-        html.Hr(),
         dbc.Row(dbc.Col(providersRankingTab)),
-        html.Hr(),
         dbc.Row(dbc.Col(expensesEvolutionTab)),
-        html.Hr(),
         dbc.Row(dbc.Col(providersSearchTab)),
+        footer,
     ]
 )
 
