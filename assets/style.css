@@ -18,6 +18,10 @@
     text-align: center;
 }
 
+.app-container{
+    margin-bottom: 20px;
+}
+
 h1{
     font-size: calc(1.8rem + 1.8vw);
 }

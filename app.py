@@ -423,19 +423,20 @@ footer = dbc.Row(
 
 body = html.Div(
     [
-        dbc.Row(dbc.Col(revenueTab)),
-        dbc.Row(dbc.Col(providersPaymentTab)),
-        dbc.Row(dbc.Col(providersRankingTab)),
-        dbc.Row(dbc.Col(expensesEvolutionTab)),
-        dbc.Row(dbc.Col(providersSearchTab)),
-        footer,
+        dbc.Row(dbc.Col(revenueTab), className="app-container"),
+        dbc.Row(dbc.Col(providersPaymentTab), className="app-container"),
+        dbc.Row(dbc.Col(providersRankingTab), className="app-container"),
+        dbc.Row(dbc.Col(expensesEvolutionTab), className="app-container"),
+        dbc.Row(dbc.Col(providersSearchTab), className="app-container")
     ]
 )
 
 app.layout = html.Div(children=[
     topNavBar,
     title,
-    body])
+    body,
+    footer
+])
 
 
 @app.callback(
