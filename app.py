@@ -455,16 +455,26 @@ app.layout = html.Div(children=[
 
 
 @app.callback(
-    [Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children')],
+    [Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children'),
+     Output("revenueDownload", "data")],
     [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date'),
-     Input('revenueDateButton', 'n_clicks')]
+     Input('revenueDownloadButton', 'n_clicks'), Input('revenueDateButton', 'n_clicks')]
 )
-def update_figure(initial_date, final_date, date_button):
+def update_figure(initial_date, final_date, button, date_button):
+    ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
     revenue_data = utils.revenue_data(filtered_df)
-    return revenue_data[0], revenue_data[1], revenue_data[2]
+    if ctx.triggered[0]['prop_id'] == 'revenueDownloadButton.n_clicks':
+        df_to_download = pd.DataFrame({'Metrica':
+                                           ['Total de ordenes de compra por',
+                                            'Cantidad de proveedores',
+                                            'Cantidad de ordenes de compra'],
+                                       'Valor': revenue_data})
+        return revenue_data[0], revenue_data[1], revenue_data[2], dcc.send_data_frame(df_to_download.to_csv, "data.csv")
+    else:
+        return revenue_data[0], revenue_data[1], revenue_data[2], dash.no_update
 
 
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),
