@@ -112,40 +112,42 @@ revenueTab = dbc.Container(children=[
             )],
         justify="center"
     ),
-    dbc.Row(
-        [
-            dbc.Col([
-                dbc.Card([
-                    html.H5("Total de ordenes de compra por:"),
-                    html.Img(src=app.get_asset_url("file-lines-solid.svg"), className='revenue-icon')
-                ], color="secondary", inverse=True, className='top-card'),
-                dbc.Card([
-                    html.H3(id='totalRevenue'),
-                ], color="secondary", inverse=True, className='bottom-card')
-            ], className='revenue-column', align="center", width='auto'
-            ),
-            dbc.Col([
-                dbc.Card([
-                    html.H5("Cantidad de proveedores:"),
-                    html.Img(src=app.get_asset_url("clipboard-solid.svg"), className='revenue-icon'),
-                ], color="secondary", inverse=True, className='top-card'),
-                dbc.Card([
-                    html.H3(id='totalProviders'),
-                ], color="secondary", inverse=True, className='bottom-card')
-            ], className='revenue-column', align="center", width='auto'
-            ),
-            dbc.Col([
-                dbc.Card([
-                    html.H5("Cantidad de ordenes de compra:"),
-                    html.Img(src=app.get_asset_url("dolly-solid.svg"), className='revenue-icon')
-                ], color="secondary", inverse=True, className='top-card'),
-                dbc.Card([
-                    html.H3(id='totalBuyOrders'),
-                ], color="secondary", inverse=True, className='bottom-card')
-            ], className='revenue-column', align="center", width='auto'
-            )]
-        , justify="center"
-    ),
+    dbc.Spinner(size="lg",
+                children=[
+                    dbc.Row(
+                        [
+                            dbc.Col([
+                                dbc.Card([
+                                    html.H5("Total de ordenes de compra por:"),
+                                    html.Img(src=app.get_asset_url("file-lines-solid.svg"), className='revenue-icon')
+                                ], color="secondary", inverse=True, className='top-card'),
+                                dbc.Card([
+                                    html.H3(id='totalRevenue'),
+                                ], color="secondary", inverse=True, className='bottom-card')
+                            ], className='revenue-column', align="center", width='auto'
+                            ),
+                            dbc.Col([
+                                dbc.Card([
+                                    html.H5("Cantidad de proveedores:"),
+                                    html.Img(src=app.get_asset_url("clipboard-solid.svg"), className='revenue-icon'),
+                                ], color="secondary", inverse=True, className='top-card'),
+                                dbc.Card([
+                                    html.H3(id='totalProviders'),
+                                ], color="secondary", inverse=True, className='bottom-card')
+                            ], className='revenue-column', align="center", width='auto'
+                            ),
+                            dbc.Col([
+                                dbc.Card([
+                                    html.H5("Cantidad de ordenes de compra:"),
+                                    html.Img(src=app.get_asset_url("dolly-solid.svg"), className='revenue-icon')
+                                ], color="secondary", inverse=True, className='top-card'),
+                                dbc.Card([
+                                    html.H3(id='totalBuyOrders'),
+                                ], color="secondary", inverse=True, className='bottom-card')
+                            ], className='revenue-column', align="center", width='auto'
+                            )]
+                        , justify="center"
+                    ), ])
 ], className="h-100 p-5 text-white bg-dark rounded-3")
 
 providersPaymentTab = dbc.Container(children=[
@@ -230,14 +232,16 @@ providersPaymentTab = dbc.Container(children=[
                 ], className='drop-down-col', width=4
             ),
         ]),
-    dbc.Row([
-        dbc.Col(
-            html.Div([
-                dcc.Graph(id='providersPaymentGraph')
-            ]), width=10
-        ),
-    ], justify="center", align="center"
-    ),
+    dbc.Spinner(size="lg",
+                children=[
+                    dbc.Row([
+                        dbc.Col(
+                            html.Div([
+                                dcc.Graph(id='providersPaymentGraph')
+                            ]), width=10
+                        ),
+                    ], justify="center", align="center"
+                    ), ])
 ], className="h-100 p-5 bg-light border rounded-3")
 
 figExpensesEvolution = px.line(df, x="Nombre Fantasia", y="Importe", labels={
@@ -306,13 +310,15 @@ expensesEvolutionTab = dbc.Container(children=[
             ),
         ]
     ),
-    dbc.Row([
-        dbc.Col([
-            html.Div(dcc.Graph(id="expensesEvolutionGraph"))
-        ], width=10),
-    ]
-        , justify="center", align="center"
-    ),
+    dbc.Spinner(size="lg",
+                children=[
+                    dbc.Row([
+                        dbc.Col([
+                            html.Div(dcc.Graph(id="expensesEvolutionGraph"))
+                        ], width=10),
+                    ]
+                        , justify="center", align="center"
+                    ), ])
 ], className="h-100 p-5 bg-light border rounded-3")
 
 providersRankingTab = dbc.Container(children=[
@@ -348,9 +354,11 @@ providersRankingTab = dbc.Container(children=[
             )],
         justify="center"
     ),
-    dbc.Row(
-        justify="center", className='centered-table', id='providersRankingTable'
-    ),
+    dbc.Spinner(size="lg",
+                children=[
+                    dbc.Row(
+                        justify="center", className='centered-table', id='providersRankingTable'
+                    ), ])
 ], className="h-100 p-5 bg-light border rounded-3")
 
 providersSearchTab = dbc.Container(children=[
@@ -399,7 +407,9 @@ providersSearchTab = dbc.Container(children=[
             )
         ], justify="center", className='title-row'
     ),
-    dbc.Row(justify="center", className='centered-table', id='providersSearchTable'),
+    dbc.Spinner(size="lg",
+                children=[
+                    dbc.Row(justify="center", className='centered-table', id='providersSearchTable'), ])
 ], className="h-100 p-5 bg-light border rounded-3")
 
 footer = dbc.Row(
@@ -413,9 +423,14 @@ footer = dbc.Row(
                             href='https://www.linkedin.com/in/lucas-la-pietra-0b1ab6194/')
                      ]),
             dbc.Row([
-                dbc.Col(html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'), href=''), width=1),
-                dbc.Col(html.A(html.Img(src=app.get_asset_url("twitter.svg"), className='footer-social-icon'), href=''), width=1),
-                dbc.Col(html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'), href=''), width=1)
+                dbc.Col(
+                    html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'), href=''),
+                    width=1),
+                dbc.Col(html.A(html.Img(src=app.get_asset_url("twitter.svg"), className='footer-social-icon'), href=''),
+                        width=1),
+                dbc.Col(
+                    html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'), href=''),
+                    width=1)
             ], className='footer-social-row', justify="center")
         ]
     ), className='bg-dark footer-row text-white', justify="center"
