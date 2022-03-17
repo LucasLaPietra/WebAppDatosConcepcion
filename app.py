@@ -171,7 +171,7 @@ providersPaymentTab = dbc.Container(children=[
                     ,
                     dbc.Col(
                         dbc.Button(html.I(className="bi bi-search"), color="primary",
-                                   id='ProvidersPaymentDateButton'),
+                                   id='providersPaymentDateButton'),
                         width='auto', align='center'
                     )
 
@@ -337,7 +337,7 @@ providersRankingTab = dbc.Container(children=[
                     ,
                     dbc.Col(
                         dbc.Button(html.I(className="bi bi-search"), color="primary",
-                                   id='ProvidersRankingDateButton'),
+                                   id='providersRankingDateButton'),
                         width='auto', align='center'
                     )
 
@@ -413,7 +413,7 @@ footer = dbc.Row(
                             href='https://www.linkedin.com/in/lucas-la-pietra-0b1ab6194/')
                      ]),
             dbc.Row([
-                dbc.Col(html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'), href=''), width=1, className='footer-social-column'),
+                dbc.Col(html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'), href=''), width=1),
                 dbc.Col(html.A(html.Img(src=app.get_asset_url("twitter.svg"), className='footer-social-icon'), href=''), width=1),
                 dbc.Col(html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'), href=''), width=1)
             ], className='footer-social-row', justify="center")
@@ -441,9 +441,10 @@ app.layout = html.Div(children=[
 
 @app.callback(
     [Output('totalRevenue', 'children'), Output('totalProviders', 'children'), Output('totalBuyOrders', 'children')],
-    [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date')]
+    [Input('dateRangeRevenue', 'start_date'), Input('dateRangeRevenue', 'end_date'),
+     Input('revenueDateButton', 'n_clicks')]
 )
-def update_figure(initial_date, final_date):
+def update_figure(initial_date, final_date, date_button):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
@@ -455,9 +456,10 @@ def update_figure(initial_date, final_date):
                Output("providersPaymentDownload", "data")],
               [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date'),
                Input('providersPaymentDropDown', 'value'), Input('providersPaymentOrientationDropDown', 'value'),
-               Input('providersPaymentOrderDropDown', 'value'), Input('providersPaymentDownloadButton', 'n_clicks')]
+               Input('providersPaymentOrderDropDown', 'value'), Input('providersPaymentDownloadButton', 'n_clicks'),
+               Input('providersPaymentDateButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date, category, orientation, order, button):
+def update_figure(initial_date, final_date, category, orientation, order, button, date_button):
     ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
@@ -486,9 +488,10 @@ def update_figure(initial_date, final_date, category, orientation, order, button
 @app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options'),
                Output("expensesEvolutionDownload", "data")],
               [Input('dateRangeExpensesEvolution', 'start_date'), Input('dateRangeExpensesEvolution', 'end_date'),
-               Input('expensesEvolutionDropDown', 'value'), Input('expensesEvolutionDownloadButton', 'n_clicks')]
+               Input('expensesEvolutionDropDown', 'value'), Input('expensesEvolutionDownloadButton', 'n_clicks'),
+               Input('expensesEvolutionDateButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date, selected_categories, button):
+def update_figure(initial_date, final_date, selected_categories, button, date_button):
     ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
@@ -516,9 +519,10 @@ def update_figure(initial_date, final_date, selected_categories, button):
 
 
 @app.callback(Output('providersRankingTable', 'children'),
-              [Input('dateRangeProvidersRanking', 'start_date'), Input('dateRangeProvidersRanking', 'end_date')]
+              [Input('dateRangeProvidersRanking', 'start_date'), Input('dateRangeProvidersRanking', 'end_date'),
+               Input('providersRankingDateButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date):
+def update_figure(initial_date, final_date, date_button):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
@@ -536,10 +540,11 @@ def update_figure(initial_date, final_date):
               [
                   Input('dateRangeProvidersRanking', 'start_date'),
                   Input('dateRangeProvidersRanking', 'end_date'),
-                  Input("providersSearchInput", "value")
+                  Input("providersSearchInput", "value"),
+                  Input('providersSearchDateButton', 'n_clicks')
               ]
               )
-def update_figure(initial_date, final_date, search_input):
+def update_figure(initial_date, final_date, search_input, date_button):
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)

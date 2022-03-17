@@ -1,3 +1,9 @@
+@media (max-width: 1000px) {
+  .container {
+    max-width: 100%;
+  }
+}
+
 .top-bar{
     background-image: url("back.jpg");
     background-color: #cccccc;
@@ -119,10 +125,6 @@ h1{
     height: 80px;
     margin-top: 50px;
     margin-bottom: 20px;
-}
-
-.footer-social-column{
-    text-align: center;
 }
 
 .footer-social-row{
