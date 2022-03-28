@@ -58,7 +58,7 @@ topNavBar = html.Div(
 
 title = dbc.Container(
     children=[
-        dbc.Row([html.H4("Actualmente la municipalidad de concepcion del uruguay informa en su sitio los siguentes "
+        dbc.Row([html.H4("Actualmente la municipalidad de Concepción del Uruguay informa en su sitio los siguentes "
                          "datos",
                          className='centered-subtitle'),
                  ], justify="center"
@@ -71,7 +71,7 @@ revenueTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('GASTOS DEL MUNICIPIO'),
-                html.H5("En esta seccion pueden conocerse los gastos del municipio en un periodo determinado"),
+                html.H5("En esta sección pueden conocerse los gastos del municipio en un periodo determinado"),
             ], className='tab-title'
             ),
             dbc.Col([
@@ -88,7 +88,7 @@ revenueTab = dbc.Container(children=[
                         width='auto', align='center')
                     ,
                     dbc.Col(
-                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                        dbc.Button(html.I(className="bi bi-arrow-right"), color="primary",
                                    id='revenueDateButton'),
                         width='auto', align='center'
                     )
@@ -118,7 +118,7 @@ revenueTab = dbc.Container(children=[
                         [
                             dbc.Col([
                                 dbc.Card([
-                                    html.H5("Total de ordenes de compra por:"),
+                                    html.H5("Total de órdenes de compra por:"),
                                     html.Img(src=app.get_asset_url("file-lines-solid.svg"), className='revenue-icon')
                                 ], color="secondary", inverse=True, className='top-card'),
                                 dbc.Card([
@@ -138,7 +138,7 @@ revenueTab = dbc.Container(children=[
                             ),
                             dbc.Col([
                                 dbc.Card([
-                                    html.H5("Cantidad de ordenes de compra:"),
+                                    html.H5("Cantidad de órdenes de compra:"),
                                     html.Img(src=app.get_asset_url("dolly-solid.svg"), className='revenue-icon')
                                 ], color="secondary", inverse=True, className='top-card'),
                                 dbc.Card([
@@ -155,7 +155,7 @@ providersPaymentTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('TOTAL CONTRATACIONES MEDIDO EN PESOS'),
-                html.H5("En esta seccion puede conocerse el dinero percibido por diferentes proveedores en un rubro"),
+                html.H5("En esta sección puede conocerse el dinero percibido por diferentes proveedores en un rubro"),
             ], className='tab-title'
             ),
             dbc.Col([
@@ -172,7 +172,7 @@ providersPaymentTab = dbc.Container(children=[
                         width='auto', align='center')
                     ,
                     dbc.Col(
-                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                        dbc.Button(html.I(className="bi bi-arrow-right"), color="primary",
                                    id='providersPaymentDateButton'),
                         width='auto', align='center'
                     )
@@ -255,7 +255,7 @@ expensesEvolutionTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('EVOLUCION DEL GASTO POR RUBRO'),
-                html.H5("En esta seccion puede conocerse la evolución del gasto en el tiempo"),
+                html.H5("En esta sección puede conocerse la evolución del gasto en el tiempo"),
             ], className='tab-title'
             ),
             dbc.Col([
@@ -272,7 +272,7 @@ expensesEvolutionTab = dbc.Container(children=[
                         width='auto', align='center')
                     ,
                     dbc.Col(
-                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                        dbc.Button(html.I(className="bi bi-arrow-right"), color="primary",
                                    id='expensesEvolutionDateButton'),
                         width='auto', align='center'
                     )
@@ -342,7 +342,7 @@ providersRankingTab = dbc.Container(children=[
                         width='auto', align='center')
                     ,
                     dbc.Col(
-                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                        dbc.Button(html.I(className="bi bi-arrow-right"), color="primary",
                                    id='providersRankingDateButton'),
                         width='auto', align='center'
                     )
@@ -366,7 +366,7 @@ providersSearchTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('LISTADO DE PROVEEDORES'),
-                html.H5("En esta seccion puede buscarse un proveedor de acuerdo a una palabra clave"),
+                html.H5("En esta sección puede buscarse un proveedor de acuerdo a una palabra clave"),
             ], className='tab-title'
             ),
             dbc.Col([
@@ -383,7 +383,7 @@ providersSearchTab = dbc.Container(children=[
                         width='auto', align='center')
                     ,
                     dbc.Col(
-                        dbc.Button(html.I(className="bi bi-search"), color="primary",
+                        dbc.Button(html.I(className="bi bi-arrow-right"), color="primary",
                                    id='providersSearchDateButton'),
                         width='auto', align='center'
                     )
@@ -399,7 +399,7 @@ providersSearchTab = dbc.Container(children=[
         [
             dbc.Col(
                 [
-                    dbc.Input(placeholder="Ingrese nombre o razon social del proveedor",
+                    dbc.Input(placeholder="Ingrese nombre o razón social del proveedor",
                               type="text",
                               id="providersSearchInput",
                               value="")
