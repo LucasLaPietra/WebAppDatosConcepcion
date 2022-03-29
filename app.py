@@ -430,6 +430,10 @@ footer = dbc.Row(
                         width=1),
                 dbc.Col(
                     html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'), href=''),
+                    width=1),
+                dbc.Col(
+                    html.A(html.Img(src=app.get_asset_url("github.svg"), className='footer-social-icon'),
+                           href='https://github.com/LucasLaPietra/WebScraperDatosConcepcion'),
                     width=1)
             ], className='footer-social-row', justify="center")
         ]
