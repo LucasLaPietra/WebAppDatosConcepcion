@@ -9,6 +9,7 @@ import flask
 import pandas as pd
 import utils
 import re
+import locale
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -20,6 +21,7 @@ app.title = 'Visualizacion datos contratos publicos'
 df = pd.read_csv('https://github.com/LucasLaPietra/WebScraperDatosConcepcion/blob/main/webscraping-app/contratos'
                  '/contratos-complete.csv?raw=true')
 
+locale.setlocale(locale.LC_ALL, 'es_ES.utf8')
 maxYear = df['Año'].max()
 minYear = df['Año'].min()
 maxFirstYearMonth = df[(df['Año'] == minYear)]['Mes'].max()
@@ -472,9 +474,9 @@ def update_figure(initial_date, final_date, button, date_button):
                                             'Cantidad de proveedores',
                                             'Cantidad de ordenes de compra'],
                                        'Valor': revenue_data})
-        return revenue_data[0], revenue_data[1], revenue_data[2], dcc.send_data_frame(df_to_download.to_csv, "data.csv")
+        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(revenue_data[2]), dcc.send_data_frame(df_to_download.to_csv, "data.csv")
     else:
-        return revenue_data[0], revenue_data[1], revenue_data[2], dash.no_update
+        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(revenue_data[2]), dash.no_update
 
 
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),

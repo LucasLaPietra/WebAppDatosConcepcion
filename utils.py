@@ -42,7 +42,7 @@ def make_expenses_evolution_df(df, filter_by_category):
 
 
 def revenue_data(df):
-    total_revenue = "$" + str(round(df["Importe"].sum(), 2))
+    total_revenue = round(df["Importe"].sum(), 2)
     total_providers = len(df["Razon social"].value_counts())
     total_buy_orders = df["Cantidad de contratados"].sum()
     return [total_revenue, total_providers, total_buy_orders]
