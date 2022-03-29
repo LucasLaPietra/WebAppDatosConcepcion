@@ -48,10 +48,12 @@ def revenue_data(df):
 
 
 def create_ranking_table_df(df):
-    filtered_df = df.groupby(['Nombre Fantasia', 'CUIL proveedor'], as_index=False)['Importe'].sum()
+    filtered_df = df.groupby(['Nombre Fantasia', 'Razon social', 'CUIL proveedor'], as_index=False)['Importe'].sum()
     ordered_df = filtered_df.sort_values(by=['Importe'], ascending=False)
     ordered_df['Nombre Fantasia'] = ordered_df['Nombre Fantasia'].apply(lambda x: x.capitalize())
     ordered_df['Importe'] = ordered_df['Importe'].apply(lambda x: round(x, 2))
+    ordered_df['Importe'] = ordered_df['Importe'].apply(lambda x: "$" + str('{0:,}'.format(x)))
+    ordered_df.insert(0, "Posición", range(1, len(ordered_df)+1), True)
     return ordered_df
 
 
