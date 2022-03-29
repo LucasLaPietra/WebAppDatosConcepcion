@@ -19,10 +19,9 @@ def filter_by_date(df, initial_date, final_date):
     return df_filter_month
 
 
-def make_providers_payment_df(df,order_input):
+def make_providers_payment_df(df):
     df_providers_payment = df.groupby(['Nombre Fantasia', 'Rubro'], as_index=False)['Importe'].sum()
-    ordered_df = df_providers_payment.sort_values(by=[order_input])
-    return ordered_df
+    return df_providers_payment
 
 
 def filter_by_category(df, category):

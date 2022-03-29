@@ -211,26 +211,6 @@ providersPaymentTab = dbc.Container(children=[
                         clearable=False,
                         className='drop-down'
                     ),
-                    html.P('Orientacion:'),
-                    dcc.Dropdown(
-                        id='providersPaymentOrientationDropDown',
-                        options=[{'label': "Horizontal", 'value': "Horizontal"},
-                                 {'label': "Vertical", 'value': "Vertical"}],
-                        value="Horizontal",
-                        multi=False,
-                        clearable=False,
-                        className='drop-down'
-                    ),
-                    html.P('Ordenar por:'),
-                    dcc.Dropdown(
-                        id='providersPaymentOrderDropDown',
-                        options=[{'label': "Nombre", 'value': "Nombre Fantasia"},
-                                 {'label': "Importe", 'value': "Importe"}],
-                        value="Importe",
-                        multi=False,
-                        clearable=False,
-                        className='drop-down'
-                    ),
                 ], className='drop-down-col', width=4
             ),
         ]),
@@ -482,30 +462,24 @@ def update_figure(initial_date, final_date, button, date_button):
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),
                Output("providersPaymentDownload", "data")],
               [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date'),
-               Input('providersPaymentDropDown', 'value'), Input('providersPaymentOrientationDropDown', 'value'),
-               Input('providersPaymentOrderDropDown', 'value'), Input('providersPaymentDownloadButton', 'n_clicks'),
+               Input('providersPaymentDropDown', 'value'), Input('providersPaymentDownloadButton', 'n_clicks'),
                Input('providersPaymentDateButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date, category, orientation, order, button, date_button):
+def update_figure(initial_date, final_date, category, button, date_button):
     ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
-    df_providers_payment = utils.make_providers_payment_df(filtered_df, order)
+    df_providers_payment = utils.make_providers_payment_df(filtered_df)
     categories = set(df_providers_payment['Rubro'])
     dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
     dict_filter.append({'label': "Ninguno", 'value': "None"})
     df_filtered_by_category = utils.filter_by_category(df_providers_payment, category)
-    if orientation == 'Horizontal':
-        fig_providers_payment = px.bar(df_filtered_by_category, x="Importe", y="Nombre Fantasia", labels={
+    fig_providers_payment = px.bar(df_filtered_by_category, x="Importe", y="Nombre Fantasia", labels={
             "Nombre Fantasia": "proveedor",
             "Importe": "Dinero percibido",
-        }, color_continuous_scale="Peach", color="Importe", orientation='h')
-    else:
-        fig_providers_payment = px.bar(df_filtered_by_category, x="Nombre Fantasia", y="Importe", labels={
-            "Nombre Fantasia": "proveedor",
-            "Importe": "Dinero percibido",
-        }, color_continuous_scale="Peach", color="Importe", orientation='v')
+        }, color_continuous_scale="Viridis", color="Importe", orientation='h')
+
     if ctx.triggered[0]['prop_id'] == 'providersPaymentDownloadButton.n_clicks':
         return fig_providers_payment, dict_filter, dcc.send_data_frame(df_filtered_by_category.to_csv, "data.csv")
     else:
@@ -531,7 +505,6 @@ def update_figure(initial_date, final_date, selected_categories, button, date_bu
             "date": "Fecha",
             "Importe": "Dinero",
         })
-        fig_expenses_evolution.data[0].line.color = "Red"
     else:
         df_categories_filtered = filtered_df[filtered_df['Rubro'].isin(selected_categories)]
         df_new = utils.make_expenses_evolution_df(df_categories_filtered, True)
