@@ -108,7 +108,11 @@ revenueTab = dbc.Container(children=[
                     justify="end"
                 ),
 
-                dcc.Download(id="revenueDownload")
+                dcc.Download(id="revenueDownload"),
+                dbc.Tooltip(
+                            "Descargar datos sobre gastos del municipio en .csv",
+                            target="revenueDownloadButton",
+                        ),
 
             ], className='date-col'
             )],
@@ -192,7 +196,11 @@ providersPaymentTab = dbc.Container(children=[
                     justify="end"
                 ),
 
-                dcc.Download(id="providersPaymentDownload")
+                dcc.Download(id="providersPaymentDownload"),
+                dbc.Tooltip(
+                    "Descargar datos sobre total de contrataciones en .csv",
+                    target="providersPaymentDownloadButton",
+                ),
 
             ], className='date-col'
             )],
@@ -272,7 +280,11 @@ expensesEvolutionTab = dbc.Container(children=[
                     justify="end"
                 ),
 
-                dcc.Download(id="expensesEvolutionDownload")
+                dcc.Download(id="expensesEvolutionDownload"),
+                dbc.Tooltip(
+                    "Descargar datos sobre evolución del gasto en .csv",
+                    target="expensesEvolutionDownloadButton",
+                ),
 
             ], className='date-col'
             )],
