@@ -110,9 +110,9 @@ revenueTab = dbc.Container(children=[
 
                 dcc.Download(id="revenueDownload"),
                 dbc.Tooltip(
-                            "Descargar datos sobre gastos del municipio en .csv",
-                            target="revenueDownloadButton",
-                        ),
+                    "Descargar datos sobre gastos del municipio en .csv",
+                    target="revenueDownloadButton",
+                ),
 
             ], className='date-col'
             )],
@@ -245,7 +245,8 @@ expensesEvolutionTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('EVOLUCION DEL GASTO POR RUBRO'),
-                html.H5("En esta sección puede conocerse la evolución del gasto en el tiempo"),
+                html.H5("En esta sección puede conocerse la evolución del gasto en el tiempo,"),
+                html.H5("seleccionando y comparando entre uno o mas rubros"),
             ], className='tab-title'
             ),
             dbc.Col([
@@ -294,11 +295,16 @@ expensesEvolutionTab = dbc.Container(children=[
         [
             dbc.Col(
                 [
-                    html.P('Rubros a comparar:'),
+                    html.P('Rubros a comparar:', id='expensesEvolutionDropDownTitle'),
                     dcc.Dropdown(
                         id='expensesEvolutionDropDown',
                         multi=True,
                         className='drop-down'
+                    ),
+                    dbc.Tooltip(
+                        "Si no tiene rubros seleccionados se mostrara la evolucion general, pero puede seleccionar"
+                        "uno o mas rubros para compararlos",
+                        target="expensesEvolutionDropDownTitle",
                     ),
                 ], className='drop-down-col'
             ),
@@ -466,9 +472,11 @@ def update_figure(initial_date, final_date, button, date_button):
                                             'Cantidad de proveedores',
                                             'Cantidad de ordenes de compra'],
                                        'Valor': revenue_data})
-        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(revenue_data[2]), dcc.send_data_frame(df_to_download.to_csv, "data.csv")
+        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
+            revenue_data[2]), dcc.send_data_frame(df_to_download.to_csv, "data.csv")
     else:
-        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(revenue_data[2]), dash.no_update
+        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
+            revenue_data[2]), dash.no_update
 
 
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),
@@ -488,9 +496,9 @@ def update_figure(initial_date, final_date, category, button, date_button):
     dict_filter.append({'label': "Ninguno", 'value': "None"})
     df_filtered_by_category = utils.filter_by_category(df_providers_payment, category)
     fig_providers_payment = px.bar(df_filtered_by_category, x="Importe", y="Nombre Fantasia", labels={
-            "Nombre Fantasia": "proveedor",
-            "Importe": "Dinero percibido",
-        }, color_continuous_scale="Viridis", color="Importe", orientation='h')
+        "Nombre Fantasia": "proveedor",
+        "Importe": "Dinero percibido",
+    }, color_continuous_scale="Viridis", color="Importe", orientation='h')
 
     if ctx.triggered[0]['prop_id'] == 'providersPaymentDownloadButton.n_clicks':
         return fig_providers_payment, dict_filter, dcc.send_data_frame(df_filtered_by_category.to_csv, "data.csv")
