@@ -68,6 +68,10 @@ h1{
     text-align: right;
 }
 
+.rc-slider{
+    margin-bottom:10px;
+}
+
 .centered-table{
     text-align: center;
     height: 400px;

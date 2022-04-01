@@ -219,6 +219,9 @@ providersPaymentTab = dbc.Container(children=[
                         clearable=False,
                         className='drop-down'
                     ),
+                    html.P('Cantidad de proveedores a mostrar:'),
+                    dcc.Slider(min=1, max=20, step=1, value=20, id='providersPaymentSlider',
+                               tooltip={"placement": "bottom", "always_visible": False})
                 ], className='drop-down-col', width=4
             ),
         ]),
@@ -488,12 +491,12 @@ def update_figure(initial_date, final_date, button, date_button):
 
 
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),
-               Output("providersPaymentDownload", "data")],
+               Output("providersPaymentDownload", "data"), Output("providersPaymentSlider", "max")],
               [Input('dateRangeProvidersPayment', 'start_date'), Input('dateRangeProvidersPayment', 'end_date'),
-               Input('providersPaymentDropDown', 'value'), Input('providersPaymentDownloadButton', 'n_clicks'),
-               Input('providersPaymentDateButton', 'n_clicks')]
+               Input('providersPaymentDropDown', 'value'), Input('providersPaymentSlider', 'value'),
+               Input('providersPaymentDownloadButton', 'n_clicks'), Input('providersPaymentDateButton', 'n_clicks')]
               )
-def update_figure(initial_date, final_date, category, button, date_button):
+def update_figure(initial_date, final_date, category, slider, button, date_button):
     ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
@@ -503,19 +506,21 @@ def update_figure(initial_date, final_date, category, button, date_button):
     dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
     dict_filter.append({'label': "Ninguno", 'value': "None"})
     df_filtered_by_category = utils.filter_by_category(df_providers_payment, category)
-    fig_providers_payment = px.bar(df_filtered_by_category, x="Importe", y="Nombre Fantasia", labels={
+    df_limited = df_filtered_by_category.nlargest(slider, 'Importe')
+    fig_providers_payment = px.bar(df_limited, x="Importe", y="Nombre Fantasia", labels={
         "Nombre Fantasia": "proveedor",
         "Importe": "Dinero percibido",
     }, color_continuous_scale="Viridis", color="Importe", orientation='h')
 
     if ctx.triggered[0]['prop_id'] == 'providersPaymentDownloadButton.n_clicks':
-        return fig_providers_payment, dict_filter, dcc.send_data_frame(df_filtered_by_category.to_csv, "data.csv")
+        return fig_providers_payment, dict_filter, dcc.send_data_frame(df_limited.to_csv, "data.csv"), \
+               len(df_filtered_by_category)
     else:
         if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersPayment.start_date') and \
                 (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersPayment.end_date'):
-            return fig_providers_payment, dict_filter, dash.no_update
+            return fig_providers_payment, dict_filter, dash.no_update, len(df_filtered_by_category)
         else:
-            return dash.no_update, dict_filter, dash.no_update
+            return dash.no_update, dict_filter, dash.no_update, len(df_filtered_by_category)
 
 
 @app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options'),
