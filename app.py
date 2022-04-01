@@ -479,8 +479,12 @@ def update_figure(initial_date, final_date, button, date_button):
         return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
             revenue_data[2]), dcc.send_data_frame(df_to_download.to_csv, "data.csv")
     else:
-        return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
-            revenue_data[2]), dash.no_update
+        if (ctx.triggered[0]['prop_id'] != 'dateRangeRevenue.start_date') and \
+                (ctx.triggered[0]['prop_id'] != 'dateRangeRevenue.end_date'):
+            return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
+                revenue_data[2]), dash.no_update
+        else:
+            dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
 
 @app.callback([Output('providersPaymentGraph', 'figure'), Output('providersPaymentDropDown', 'options'),
@@ -507,7 +511,11 @@ def update_figure(initial_date, final_date, category, button, date_button):
     if ctx.triggered[0]['prop_id'] == 'providersPaymentDownloadButton.n_clicks':
         return fig_providers_payment, dict_filter, dcc.send_data_frame(df_filtered_by_category.to_csv, "data.csv")
     else:
-        return fig_providers_payment, dict_filter, dash.no_update
+        if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersPayment.start_date') and \
+                (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersPayment.end_date'):
+            return fig_providers_payment, dict_filter, dash.no_update
+        else:
+            return dash.no_update, dict_filter, dash.no_update
 
 
 @app.callback([Output('expensesEvolutionGraph', 'figure'), Output('expensesEvolutionDropDown', 'options'),
@@ -539,7 +547,11 @@ def update_figure(initial_date, final_date, selected_categories, button, date_bu
     if ctx.triggered[0]['prop_id'] == 'expensesEvolutionDownloadButton.n_clicks':
         return fig_expenses_evolution, dict_filter, dcc.send_data_frame(df_new.to_csv, "data.csv")
     else:
-        return fig_expenses_evolution, dict_filter, dash.no_update
+        if (ctx.triggered[0]['prop_id'] != 'dateRangeExpensesEvolution.start_date') and \
+                (ctx.triggered[0]['prop_id'] != 'dateRangeExpensesEvolution.end_date'):
+            return fig_expenses_evolution, dict_filter, dash.no_update
+        else:
+            return dash.no_update, dict_filter, dash.no_update
 
 
 @app.callback(Output('providersRankingTable', 'children'),
@@ -547,6 +559,7 @@ def update_figure(initial_date, final_date, selected_categories, button, date_bu
                Input('providersRankingDateButton', 'n_clicks')]
               )
 def update_figure(initial_date, final_date, date_button):
+    ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
@@ -557,18 +570,23 @@ def update_figure(initial_date, final_date, date_button):
         hover=True,
         responsive=True,
         striped=True)
-    return table
+    if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersRanking.start_date') and \
+            (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersRanking.end_date'):
+        return table
+    else:
+        return dash.no_update
 
 
 @app.callback(Output('providersSearchTable', 'children'),
               [
-                  Input('dateRangeProvidersRanking', 'start_date'),
-                  Input('dateRangeProvidersRanking', 'end_date'),
+                  Input('dateRangeProvidersSearch', 'start_date'),
+                  Input('dateRangeProvidersSearch', 'end_date'),
                   Input("providersSearchInput", "value"),
                   Input('providersSearchDateButton', 'n_clicks')
               ]
               )
 def update_figure(initial_date, final_date, search_input, date_button):
+    ctx = dash.callback_context
     initial_date = dt.strptime(re.split('T| ', initial_date)[0], '%Y-%m-%d')
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
@@ -579,7 +597,11 @@ def update_figure(initial_date, final_date, search_input, date_button):
         hover=True,
         responsive=True,
         striped=True)
-    return table
+    if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersSearch.start_date') and \
+            (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersSearch.end_date'):
+        return table
+    else:
+        return dash.no_update
 
 
 if __name__ == '__main__':
