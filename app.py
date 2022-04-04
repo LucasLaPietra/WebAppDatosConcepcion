@@ -9,7 +9,6 @@ import flask
 import pandas as pd
 import utils
 import re
-import locale
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -21,7 +20,6 @@ app.title = 'Visualizacion datos contratos publicos'
 df = pd.read_csv('https://github.com/LucasLaPietra/WebScraperDatosConcepcion/blob/main/webscraping-app/contratos'
                  '/contratos-complete.csv?raw=true')
 
-locale.setlocale(locale.LC_ALL, 'es_ES.utf8')
 maxYear = df['Año'].max()
 minYear = df['Año'].min()
 maxFirstYearMonth = df[(df['Año'] == minYear)]['Mes'].max()
