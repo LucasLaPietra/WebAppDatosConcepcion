@@ -58,7 +58,7 @@ def create_ranking_table_df(df):
 
 
 def create_search_table_df(df, search_input):
-    grouped_df = df.groupby(['Nombre Fantasia', 'Razon social', 'CUIL proveedor'], as_index=False)['Importe', 'Cantidad de contratados']\
+    grouped_df = df.groupby(['Nombre Fantasia', 'Razon social', 'CUIL proveedor'], as_index=False)[['Importe', 'Cantidad de contratados']]\
         .sum()
     input_upper = search_input.upper()
     filtered_df = grouped_df[grouped_df['Nombre Fantasia'].str.contains(input_upper) | grouped_df['Razon social'].str
