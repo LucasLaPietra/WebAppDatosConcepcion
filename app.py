@@ -425,16 +425,23 @@ footer = dbc.Row(
                      ]),
             dbc.Row([
                 dbc.Col(
-                    html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'), href=''),
+                    html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'),
+                           href='https://m.facebook.com/datosconcepcion22/'),
                     width=1),
-                dbc.Col(html.A(html.Img(src=app.get_asset_url("twitter.svg"), className='footer-social-icon'), href=''),
+                dbc.Col(html.A(html.Img(src=app.get_asset_url("twitter.svg"), className='footer-social-icon'),
+                               href='https://twitter.com/DataConcepcion?t=eLjVH-ZLjYTt8DXltbuHqQ&s=08 '),
                         width=1),
                 dbc.Col(
-                    html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'), href=''),
+                    html.A(html.Img(src=app.get_asset_url("instagram.svg"), className='footer-social-icon'),
+                           href='https://instagram.com/datos.concepcion?utm_medium=copy_link'),
                     width=1),
                 dbc.Col(
                     html.A(html.Img(src=app.get_asset_url("github.svg"), className='footer-social-icon'),
                            href='https://github.com/LucasLaPietra/WebScraperDatosConcepcion'),
+                    width=1),
+                dbc.Col(
+                    html.A(html.Img(src=app.get_asset_url("mail.svg"), className='footer-social-icon'),
+                           href='datosconcepcion22@gmail.com'),
                     width=1)
             ], className='footer-social-row', justify="center")
         ]
