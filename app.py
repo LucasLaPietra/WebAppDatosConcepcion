@@ -441,7 +441,7 @@ footer = dbc.Row(
                     width=1),
                 dbc.Col(
                     html.A(html.Img(src=app.get_asset_url("mail.svg"), className='footer-social-icon'),
-                           href='datosconcepcion22@gmail.com'),
+                           href='mailto: datosconcepcion22@gmail.com'),
                     width=1)
             ], className='footer-social-row', justify="center")
         ]
