@@ -487,8 +487,7 @@ def update_figure(initial_date, final_date, button, date_button):
         return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
             revenue_data[2]), dcc.send_data_frame(df_to_download.to_csv, "data.csv")
     else:
-        if (ctx.triggered[0]['prop_id'] != 'dateRangeRevenue.start_date') and \
-                (ctx.triggered[0]['prop_id'] != 'dateRangeRevenue.end_date'):
+        if (ctx.triggered[0]['prop_id'] == 'revenueDateButton.n_clicks') | (ctx.triggered[0]['prop_id'] == '.'):
             return "$" + str('{0:,}'.format(revenue_data[0])), '{0:,}'.format(revenue_data[1]), '{0:,}'.format(
                 revenue_data[2]), dash.no_update
         else:
@@ -521,8 +520,7 @@ def update_figure(initial_date, final_date, category, slider, button, date_butto
         return fig_providers_payment, dict_filter, dcc.send_data_frame(df_limited.to_csv, "data.csv"), \
                len(df_filtered_by_category)
     else:
-        if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersPayment.start_date') and \
-                (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersPayment.end_date'):
+        if (ctx.triggered[0]['prop_id'] == 'providersPaymentDateButton.n_clicks') | (ctx.triggered[0]['prop_id'] == '.'):
             return fig_providers_payment, dict_filter, dash.no_update, len(df_filtered_by_category)
         else:
             return dash.no_update, dict_filter, dash.no_update, len(df_filtered_by_category)
@@ -557,8 +555,7 @@ def update_figure(initial_date, final_date, selected_categories, button, date_bu
     if ctx.triggered[0]['prop_id'] == 'expensesEvolutionDownloadButton.n_clicks':
         return fig_expenses_evolution, dict_filter, dcc.send_data_frame(df_new.to_csv, "data.csv")
     else:
-        if (ctx.triggered[0]['prop_id'] != 'dateRangeExpensesEvolution.start_date') and \
-                (ctx.triggered[0]['prop_id'] != 'dateRangeExpensesEvolution.end_date'):
+        if (ctx.triggered[0]['prop_id'] == 'expensesEvolutionDateButton.n_clicks') | (ctx.triggered[0]['prop_id'] == '.'):
             return fig_expenses_evolution, dict_filter, dash.no_update
         else:
             return dash.no_update, dict_filter, dash.no_update
@@ -580,8 +577,7 @@ def update_figure(initial_date, final_date, date_button):
         hover=True,
         responsive=True,
         striped=True)
-    if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersRanking.start_date') and \
-            (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersRanking.end_date'):
+    if (ctx.triggered[0]['prop_id'] == 'providersRankingDateButton.n_clicks') | (ctx.triggered[0]['prop_id'] == '.'):
         return table
     else:
         return dash.no_update
@@ -607,8 +603,7 @@ def update_figure(initial_date, final_date, search_input, date_button):
         hover=True,
         responsive=True,
         striped=True)
-    if (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersSearch.start_date') and \
-            (ctx.triggered[0]['prop_id'] != 'dateRangeProvidersSearch.end_date'):
+    if (ctx.triggered[0]['prop_id'] == 'providersSearchDateButton.n_clicks') | (ctx.triggered[0]['prop_id'] == '.'):
         return table
     else:
         return dash.no_update
