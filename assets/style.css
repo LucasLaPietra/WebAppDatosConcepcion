@@ -5,8 +5,9 @@
 }
 
 .top-bar{
-    background-image: url("back.jpg");
+    background-image: url("back2.jpg");
     background-color: #cccccc;
+     background-size: cover;
 }
 
 .top-bar-top-row{
