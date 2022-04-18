@@ -132,6 +132,14 @@ h1{
     margin-bottom: 20px;
 }
 
+.footer-title{
+    font-size: 1.5rem;
+}
+
+.footer-subtitle{
+    font-size: 1.15rem;
+}
+
 .footer-social-row{
     text-align: center;
 }
@@ -149,5 +157,6 @@ p{
 }
 
 a{
-color: white;
+    color: white;
+    text-decoration: none
 }

@@ -417,12 +417,12 @@ footer = dbc.Row(
     dbc.Col(
         [
             html.Img(src=app.get_asset_url('logo.png'), className='footer-logo'),
-            html.H3(['UN PROYECTO DE ', html.B('DATOS CONCEPCIÓN')]),
-            html.H5('Argentina - Latam | info@desconfio.org'),
+            html.H3(['UN PROYECTO DE ', html.B('DATOS CONCEPCIÓN')], className='footer-title'),
+            html.H5('Argentina - Latam', className='footer-subtitle'),
             html.H5(['Aplicación desarrollada por ',
                      html.A('Lucas La Pietra',
                             href='https://www.linkedin.com/in/lucas-la-pietra-0b1ab6194/')
-                     ]),
+                     ], className='footer-subtitle'),
             dbc.Row([
                 dbc.Col(
                     html.A(html.Img(src=app.get_asset_url("facebook.svg"), className='footer-social-icon'),
