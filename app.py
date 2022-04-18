@@ -58,7 +58,7 @@ topNavBar = html.Div(
 
 title = dbc.Container(
     children=[
-        dbc.Row([html.H4("Actualmente la municipalidad de Concepción del Uruguay informa en su sitio los siguentes "
+        dbc.Row([html.H4("Actualmente la Municipalidad de Concepción del Uruguay informa en su sitio los siguentes "
                          "datos",
                          className='centered-subtitle'),
                  ], justify="center"
@@ -71,7 +71,7 @@ revenueTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('GASTOS DEL MUNICIPIO'),
-                html.H5("En esta sección pueden conocerse los gastos del municipio en un periodo determinado"),
+                html.H5("En esta sección pueden conocerse los gastos del municipio en un período determinado"),
             ], className='tab-title'
             ),
             dbc.Col([
@@ -158,7 +158,7 @@ providersPaymentTab = dbc.Container(children=[
     dbc.Row(
         [
             dbc.Col([
-                html.H2('TOTAL CONTRATACIONES MEDIDO EN PESOS'),
+                html.H2('TOTAL DE CONTRATACIONES MEDIDO EN PESOS'),
                 html.H5("En esta sección puede conocerse el dinero percibido por diferentes proveedores en un rubro"),
             ], className='tab-title'
             ),
@@ -246,8 +246,8 @@ expensesEvolutionTab = dbc.Container(children=[
         [
             dbc.Col([
                 html.H2('EVOLUCION DEL GASTO POR RUBRO'),
-                html.H5("En esta sección puede conocerse la evolución del gasto en el tiempo,"),
-                html.H5("seleccionando y comparando entre uno o mas rubros"),
+                html.H5("En esta sección puede conocerse la evolución del gasto en el tiempo, seleccionando y"
+                        " comparando entre uno o más rubros"),
             ], className='tab-title'
             ),
             dbc.Col([
