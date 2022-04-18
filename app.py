@@ -27,7 +27,7 @@ minFirstYearMonth = df[(df['Año'] == minYear)]['Mes'].min()
 maxActualYearMonth = df[(df['Año'] == maxYear)]['Mes'].max()
 minActualYearMonth = df[(df['Año'] == maxYear)]['Mes'].min()
 
-topNavBar = html.Div(
+topNavBar2 = html.Div(
     dbc.Row(
         [
             dbc.Col([
@@ -42,6 +42,7 @@ topNavBar = html.Div(
                 dbc.Row(
                     [
                         dbc.Col([
+                            html.Img(src=app.get_asset_url('logo.png'), className='footer-logo'),
                             html.H1(children='DATOS'),
                             html.H3(children='CONCEPCIÓN'),
                         ], width=3, className='top-bar-bottom-row-column')
@@ -53,6 +54,37 @@ topNavBar = html.Div(
             ])
         ],
         align="center", className='top-bar'
+    )
+)
+
+topNavBar = html.Div(
+    dbc.Row(
+        [
+            dbc.Col([
+                dbc.Row(
+                    [
+                        html.H1(children='Visualización de datos'),
+                        html.H1(children='de CONTRATOS PÚBLICOS'),
+                        html.H3(children='de la Municipalidad de Concepción del Uruguay'),
+                    ],
+                    className='top-bar-top-row text-white', align="center"
+                ),
+            ]),
+            dbc.Col([
+                dbc.Row(
+                    [
+                        dbc.Col([
+                            html.Img(src=app.get_asset_url('logo.png'), className='top-bar-logo'),
+                            html.H1(children='DATOS'),
+                            html.H3(children='CONCEPCIÓN'),
+                        ], className='top-bar-bottom-row-column')
+
+                    ],
+                    className='top-bar-bottom-row text-white', justify="end", align="center"
+                )
+            ], width=3)
+        ],
+        className='top-bar'
     )
 )
 
