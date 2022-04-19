@@ -441,7 +441,8 @@ providersSearchTab = dbc.Container(children=[
 footer = dbc.Row(
     dbc.Col(
         [
-            html.Img(src=app.get_asset_url('logo.png'), className='footer-logo'),
+            html.A(html.Img(src=app.get_asset_url("logo.png"), className='footer-logo'),
+                   href='www.datosconcepcion.com.ar'),
             html.H3(['UN PROYECTO DE ', html.B('DATOS CONCEPCIÓN')], className='footer-title'),
             html.H5('Argentina - Latam', className='footer-subtitle'),
             html.H5(['Aplicación desarrollada por ',
