@@ -130,6 +130,13 @@ revenueTab = dbc.Container(children=[
                 ),
                 dbc.Row(
                     dbc.Col(
+                        html.P("Para aplicar cambios en las fechas seleccionadas, hacer clic en →"),
+                        className='date-legend'
+                    ),
+                    justify="end"
+                ),
+                dbc.Row(
+                    dbc.Col(
                         dbc.Button(
                             html.Span([html.I(className="bi bi-cloud-download"), "  Descargar Datos"]),
                             color="primary",
@@ -137,7 +144,6 @@ revenueTab = dbc.Container(children=[
                         width='auto'),
                     justify="end"
                 ),
-
                 dcc.Download(id="revenueDownload"),
                 dbc.Tooltip(
                     "Descargar datos sobre gastos del municipio en .csv",
@@ -214,6 +220,13 @@ providersPaymentTab = dbc.Container(children=[
 
                 ],
                     justify="end", className='date-row'
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        html.P("Para aplicar cambios en las fechas seleccionadas, hacer clic en →"),
+                        className='date-legend'
+                    ),
+                    justify="end"
                 ),
                 dbc.Row(
                     dbc.Col(
@@ -303,6 +316,13 @@ expensesEvolutionTab = dbc.Container(children=[
                 ),
                 dbc.Row(
                     dbc.Col(
+                        html.P("Para aplicar cambios en las fechas seleccionadas, hacer clic en →"),
+                        className='date-legend'
+                    ),
+                    justify="end"
+                ),
+                dbc.Row(
+                    dbc.Col(
                         dbc.Button(
                             html.Span([html.I(className="bi bi-cloud-download"), "  Descargar Datos"]),
                             color="primary",
@@ -378,6 +398,13 @@ providersRankingTab = dbc.Container(children=[
                 ],
                     justify="end", className='date-row'
                 ),
+                dbc.Row(
+                    dbc.Col(
+                        html.P("Para aplicar cambios en las fechas seleccionadas, hacer clic en →"),
+                        className='date-legend'
+                    ),
+                    justify="end"
+                ),
             ], className='date-col'
             )],
         justify="center"
@@ -416,6 +443,13 @@ providersSearchTab = dbc.Container(children=[
 
                 ],
                     justify="end", className='date-row'
+                ),
+                dbc.Row(
+                    dbc.Col(
+                        html.P("Para aplicar cambios en las fechas seleccionadas, hacer clic en →"),
+                        className='date-legend'
+                    ),
+                    justify="end"
                 ),
             ], className='date-col'
             )],

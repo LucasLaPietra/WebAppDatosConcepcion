@@ -45,11 +45,16 @@ h1{
 
 .date-row{
     text-align: center;
-    margin-bottom:10px;
 }
 
 .date-col{
     margin-top:20px;
+}
+
+.date-legend{
+    text-align:right;
+    margin-bottom:10px;
+    font-size: calc(0.5rem + 0.5vw);
 }
 
 .nav-tabs{
