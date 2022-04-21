@@ -568,7 +568,7 @@ def update_figure(initial_date, final_date, category, slider, button, date_butto
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
     df_providers_payment = utils.make_providers_payment_df(filtered_df)
     categories = set(df_providers_payment['Rubro'])
-    dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
+    dict_filter = [{'label': i.capitalize(), 'value': i} for i in sorted(categories)]
     dict_filter.append({'label': "Ninguno", 'value': "None"})
     df_filtered_by_category = utils.filter_by_category(df_providers_payment, category)
     df_limited = df_filtered_by_category.nlargest(slider, 'Importe')
@@ -600,7 +600,7 @@ def update_figure(initial_date, final_date, selected_categories, button, date_bu
     final_date = dt.strptime(re.split('T| ', final_date)[0], '%Y-%m-%d')
     filtered_df = utils.filter_by_date(df, initial_date, final_date)
     categories = set(filtered_df['Rubro'])
-    dict_filter = [{'label': i.capitalize(), 'value': i} for i in categories]
+    dict_filter = [{'label': i.capitalize(), 'value': i} for i in sorted(categories)]
     if (selected_categories is None) or (len(selected_categories) == 0):
         df_new = utils.make_expenses_evolution_df(filtered_df, False)
         fig_expenses_evolution = px.line(df_new, x="date", y="Importe", labels={
