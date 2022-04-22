@@ -467,9 +467,7 @@ providersSearchTab = dbc.Container(children=[
             )
         ], justify="center", className='title-row'
     ),
-    dbc.Spinner(size="lg",
-                children=[
-                    dbc.Row(justify="center", className='centered-table', id='providersSearchTable'), ])
+    dbc.Row(justify="center", className='centered-table', id='providersSearchTable'),
 ], className="h-100 p-5 bg-light border rounded-3")
 
 footer = dbc.Row(
