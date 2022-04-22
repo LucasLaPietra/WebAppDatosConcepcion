@@ -476,7 +476,7 @@ footer = dbc.Row(
     dbc.Col(
         [
             html.A(html.Img(src=app.get_asset_url("logo.png"), className='footer-logo'),
-                   href='www.datosconcepcion.com.ar'),
+                   href='https://www.datosconcepcion.com.ar'),
             html.H3(['UN PROYECTO DE ', html.B('DATOS CONCEPCIÓN')], className='footer-title'),
             html.H5('Argentina - Latam', className='footer-subtitle'),
             html.H5(['Aplicación desarrollada por ',
@@ -497,7 +497,7 @@ footer = dbc.Row(
                     width=1),
                 dbc.Col(
                     html.A(html.Img(src=app.get_asset_url("github.svg"), className='footer-social-icon'),
-                           href='https://github.com/LucasLaPietra/WebScraperDatosConcepcion'),
+                           href='https://github.com/DatosConcepcion/WebScraperDatosConcepcion'),
                     width=1),
                 dbc.Col(
                     html.A(html.Img(src=app.get_asset_url("mail.svg"), className='footer-social-icon'),
